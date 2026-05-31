@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#e2e8f0" id="metaThemeColor">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Zahpy Pro">
+    <title>Zahpy Business Pro — Professional Invoicing</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Required Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                        signature: ['"Great Vibes"', 'cursive']
+                    },
+                    colors: {
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Premium Card Elevation */
+        .panel-deck {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body { background: white !important; }
+            .no-print { display: none !important; }
+            .print-area { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
+        }
+
+        /* Toast Animations */
+        .toast-enter { animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .toast-exit { animation: toastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes toastIn { from { transform: translateY(100%) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateY(0) scale(1); opacity: 1; } to { transform: translateY(100%) scale(0.95); opacity: 0; } }
+
+        /* Input specific focus rings */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0ea5e9 !important;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1) !important;
+        }
+        
+        /* Sticky preview panel container */
+        .preview-sticky-container {
+            position: sticky;
+            top: 24px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding-bottom: 40px;
+            overflow-x: hidden;
+        }
+        
+        /* Great Vibes Signature Font */
+        .font-signature { font-family: 'Great Vibes', cursive; }
+    </style>
+</head>
+<body class="bg-slate-200 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-200 min-h-screen flex flex-col antialiased">
+
+    <!-- NAVIGATION WITH AMPLIFIED GLASSMORPHISM -->
+    <nav class="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-300/50 dark:border-slate-800/50 sticky top-0 z-40 no-print shadow-sm">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-lg shadow-sm">Z</div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Zahpy<span class="text-brand-600 font-medium">Pro</span></span>
+                </div>
+                
+                <!-- Desktop Tabs -->
+                <div class="hidden md:block">
+                    <div class="flex space-x-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                        <button class="nav-tab active px-4 py-1.5 rounded-lg text-sm font-semibold transition-all bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400" data-target="createView">
+                            <i class="fas fa-layer-group mr-1.5"></i> <span class="ui-str" data-key="tabCreate">Create</span>
+                        </button>
+                        <button class="nav-tab px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" data-target="calcView">
+                            <i class="fas fa-calculator mr-1.5"></i> <span class="ui-str" data-key="tabCalc">Calculator</span>
+                        </button>
+                        <button class="nav-tab px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" data-target="emailView">
+                            <i class="fas fa-paper-plane mr-1.5"></i> <span class="ui-str" data-key="tabEmail">Email</span>
+                        </button>
+                        <button class="nav-tab px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" data-target="historyView">
+                            <i class="fas fa-folder-open mr-1.5"></i> <span class="ui-str" data-key="tabHistory">History</span>
+                        </button>
+                        <button class="nav-tab px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" data-target="dashboardView">
+                            <i class="fas fa-chart-pie mr-1.5"></i> <span class="ui-str" data-key="tabDash">Dashboard</span>
+                        </button>
+                        <button class="nav-tab px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50" data-target="settingsView">
+                            <i class="fas fa-cog mr-1.5"></i> <span class="ui-str" data-key="tabSettings">Settings</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="flex items-center gap-3">
+                    <button id="themeToggle" class="w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-brand-600 transition-colors border border-slate-200 dark:border-slate-700">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="appMainContent" class="flex-1 w-full max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 hidden">
+        
+        <!-- ================= CREATE VIEW ================= -->
+        <div id="createView" class="view-section grid grid-cols-1 xl:grid-cols-12 gap-8">
+            
+            <!-- LEFT COLUMN: Invoice Builder Form -->
+            <div class="xl:col-span-5 2xl:col-span-5 space-y-6 no-print">
+                
+                <!-- Explicit Header: Dark Mode highlight applied here -->
+                <div class="flex items-end min-h-[36px] mb-4">
+                    <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all flex items-center gap-2">
+                        <i class="fas fa-file-invoice text-brand-500"></i> Generate Invoice
+                    </h2>
+                </div>
+                
+                <!-- Deck: Regional Settings -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden panel-deck border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-100 dark:bg-slate-800/80 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                        <i class="fas fa-globe text-slate-400"></i>
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-200 text-sm tracking-wide uppercase ui-str" data-key="panelRegional">Regional Settings</h3>
+                    </div>
+                    <div class="p-5 grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblLang">Language</label>
+                            <select id="uiLang" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5 transition-colors">
+                                <option value="en">🇺🇸 English</option>
+                                <option value="es">🇪🇸 Español</option>
+                                <option value="fr">🇫🇷 Français</option>
+                                <option value="de">🇩🇪 Deutsch</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblCurr">Currency</label>
+                            <select id="docCurrency" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5 transition-colors">
+                                <option value="$">USD ($)</option>
+                                <option value="€">EUR (€)</option>
+                                <option value="£">GBP (£)</option>
+                                <option value="₹">INR (₹)</option>
+                                <option value="¥">JPY (¥)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deck: Document Setup -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden panel-deck border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-100 dark:bg-slate-800/80 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                        <i class="fas fa-file-invoice text-slate-400"></i>
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-200 text-sm tracking-wide uppercase ui-str" data-key="panelDocSetup">Document Setup</h3>
+                    </div>
+                    <div class="p-5 grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblDocType">Doc Type</label>
+                            <select id="docType" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                                <option value="INVOICE">📄 Invoice</option>
+                                <option value="ESTIMATE">📝 Estimate</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblDocNum">Document #</label>
+                            <input type="text" id="docNumber" value="INV-1001" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblDate">Date</label>
+                            <input type="date" id="docDate" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblStatus">Status</label>
+                            <select id="docStatus" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                                <option value="Draft">Draft</option>
+                                <option value="Sent">Sent</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Overdue">Overdue</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deck: Client & Business Info -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden panel-deck border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-100 dark:bg-slate-800/80 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                        <i class="fas fa-address-book text-slate-400"></i>
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-200 text-sm tracking-wide uppercase ui-str" data-key="panelClientBiz">Client & Business</h3>
+                    </div>
+                    <div class="p-5 grid grid-cols-2 gap-5">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblYourBiz">Your Business Name</label>
+                            <input type="text" id="businessName" value="Zahpy Solutions" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblClientName">Client Name</label>
+                            <input type="text" id="clientName" value="Nexus Studio" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblClientEmail">Client Email</label>
+                            <input type="email" id="clientEmail" value="client@nexus.com" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deck: Line Items -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden panel-deck border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-100 dark:bg-slate-800/80 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-list-ul text-slate-400"></i>
+                            <h3 class="font-semibold text-slate-700 dark:text-slate-200 text-sm tracking-wide uppercase ui-str" data-key="panelItems">Line Items</h3>
+                        </div>
+                        <div class="w-32">
+                            <select id="unitLabel" class="w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs rounded-md block p-1.5">
+                                <option value="Qty">Quantity</option>
+                                <option value="Hours">Hours</option>
+                                <option value="Days">Days</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <!-- Header row -->
+                        <div class="grid grid-cols-12 gap-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">
+                            <div class="col-span-6 ui-str" data-key="thDesc">Description</div>
+                            <div class="col-span-2 ui-str" data-key="thQty">Unit</div>
+                            <div class="col-span-3 ui-str" data-key="thPrice">Price</div>
+                            <div class="col-span-1"></div>
+                        </div>
+                        <!-- Items Container -->
+                        <div id="itemsContainer" class="space-y-3 mb-4">
+                            <!-- Items injected via JS -->
+                        </div>
+                        <button id="addItemBtn" class="w-full py-2.5 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-slate-500 hover:text-brand-600 hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors font-medium text-sm flex items-center justify-center gap-2">
+                            <i class="fas fa-plus"></i> <span class="ui-str" data-key="btnAddItem">Add Line Item</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Deck: Financials & Terms -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden panel-deck border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-100 dark:bg-slate-800/80 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                        <i class="fas fa-scale-balanced text-slate-400"></i>
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-200 text-sm tracking-wide uppercase ui-str" data-key="panelFin">Financials & Terms</h3>
+                    </div>
+                    <div class="p-5 grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblTax">Tax (%)</label>
+                            <input type="number" id="taxRate" value="8" step="0.5" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblDisc">Discount Amt</label>
+                            <input type="number" id="discountAmount" value="0" step="1" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblDue">Due Date</label>
+                            <input type="date" id="dueDate" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblLate">Late Fee (%)</label>
+                            <input type="number" id="lateFee" value="10" step="1" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">PayPal Username</label>
+                            <div class="flex">
+                                <span class="inline-flex items-center px-3 text-sm text-slate-500 bg-slate-100 border border-r-0 border-slate-300 rounded-l-md dark:bg-slate-700 dark:text-slate-400 dark:border-slate-600">paypal.me/</span>
+                                <input type="text" id="paypalUser" placeholder="username" class="rounded-none rounded-r-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white block flex-1 min-w-0 w-full text-sm p-2.5">
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Stripe Payment Link</label>
+                            <div class="flex">
+                                <span class="inline-flex items-center px-3 text-sm text-slate-500 bg-slate-100 border border-r-0 border-slate-300 rounded-l-md dark:bg-slate-700 dark:text-slate-400 dark:border-slate-600"><i class="fas fa-link"></i></span>
+                                <input type="text" id="stripeLink" placeholder="https://buy.stripe.com/..." class="rounded-none rounded-r-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white block flex-1 min-w-0 w-full text-sm p-2.5">
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblNotes">Notes</label>
+                            <textarea id="notes" rows="1" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">Thank you for your business. Payment is due within 14 days of receipt.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deck: Signature -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden panel-deck border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-100 dark:bg-slate-800/80 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                        <i class="fas fa-file-signature text-slate-400"></i>
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-200 text-sm tracking-wide uppercase">Signature</h3>
+                    </div>
+                    <div class="p-5 grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Signatory Name</label>
+                            <input type="text" id="sigName" placeholder="Leave blank to sign by hand" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Date</label>
+                            <input type="date" id="sigDate" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Live Preview Panel -->
+            <div class="xl:col-span-7 2xl:col-span-7">
+                <div class="preview-sticky-container" id="previewStickyWrapper">
+                    
+                    <!-- Wrapper to align precisely with the 816px paper width -->
+                    <div class="max-w-[816px] mx-auto w-full">
+                        
+                        <!-- Header & Action Buttons -->
+                        <div class="flex justify-between items-end mb-4 no-print min-h-[36px] px-1">
+                            <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all flex items-center gap-2">
+                                <i class="fas fa-eye text-brand-500"></i> <span class="ui-str" data-key="titlePreview">Live Preview</span>
+                            </h2>
+                            <div class="flex gap-2">
+                                <button id="saveHistoryBtn" class="bg-brand-600 text-white hover:bg-brand-700 px-4 py-1.5 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                                <button id="pdfExportBtn" class="bg-slate-800 text-white hover:bg-slate-900 dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900 px-4 py-1.5 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </button>
+                                <button id="printPreviewBtn" class="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 px-4 py-1.5 rounded-lg text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
+                                    <i class="fas fa-print"></i> Print
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- US Letter Canvas Container (8.5x11 aspect ratio) -->
+                        <div class="bg-white text-slate-900 shadow-xl rounded-none md:rounded-lg overflow-hidden border border-slate-200 print-area w-full flex flex-col" id="invoicePaper" style="min-height: 1056px;">
+                            <div id="previewPrintArea" class="p-8 sm:p-12 flex flex-col flex-1">
+                                <!-- Preview Content rendered by JS -->
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CALCULATOR VIEW ================= -->
+        <div id="calcView" class="view-section hidden space-y-6 max-w-5xl mx-auto">
+            <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-6 ui-str" data-key="tabCalc">Calculator</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase">Quantity / Hours</label>
+                        <input type="number" id="calcQty" value="10" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-lg rounded-lg p-3">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase">Rate / Price</label>
+                        <input type="number" id="calcRate" value="75" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-lg rounded-lg p-3">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase">Tax (%)</label>
+                            <input type="number" id="calcTax" value="8" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-lg p-3">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase">Discount</label>
+                            <input type="number" id="calcDisc" value="0" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-lg p-3">
+                        </div>
+                    </div>
+                    <button id="applyCalcBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white px-5 py-3.5 rounded-xl font-bold shadow-sm transition-colors mt-4">Apply to Invoice</button>
+                </div>
+                
+                <!-- Receipt panel (WHITE IN DARK MODE FOR VISIBILITY) -->
+                <div class="bg-slate-50 dark:bg-white rounded-2xl p-8 border border-slate-200 dark:border-slate-300 flex flex-col justify-center h-full text-center">
+                    <p class="text-slate-500 dark:text-slate-500 font-medium uppercase tracking-wider text-sm mb-2">Subtotal</p>
+                    <div id="calcSub" class="text-4xl font-mono font-bold text-slate-800 dark:text-slate-800 mb-6">$750.00</div>
+                    <p class="text-slate-500 dark:text-slate-500 font-medium uppercase tracking-wider text-sm mb-2">Tax</p>
+                    <div id="calcTaxAmt" class="text-xl font-mono font-medium text-slate-600 dark:text-slate-600 mb-8">$60.00</div>
+                    <div class="w-16 h-1 bg-brand-500 mx-auto rounded-full mb-8"></div>
+                    <p class="text-slate-500 dark:text-slate-500 font-black uppercase tracking-widest text-sm mb-2">Total Due</p>
+                    <div id="calcTotal" class="text-5xl font-mono font-black text-brand-600 dark:text-brand-600">$810.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= EMAIL VIEW ================= -->
+        <div id="emailView" class="view-section hidden max-w-4xl mx-auto space-y-4">
+            <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-4 ui-str" data-key="tabEmail">Email Assistant</h2>
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-[600px]">
+                <div class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 p-4 flex flex-wrap gap-4 items-center">
+                    <div class="flex-1 min-w-[200px]">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Send To</label>
+                        <input id="emailTo" type="email" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm" placeholder="client@example.com">
+                    </div>
+                    <div class="w-64">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1"><i class="fas fa-magic text-brand-500 mr-1"></i> AI Tone / Template</label>
+                        <select id="emailTemplateSelect" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm font-medium text-slate-700 dark:text-slate-200"></select>
+                    </div>
+                </div>
+                <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-slate-900/50">
+                    <textarea id="emailPreviewBox" class="w-full h-full resize-none outline-none text-sm font-mono text-slate-700 dark:text-slate-300 bg-transparent leading-relaxed" spellcheck="false"></textarea>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-4 flex gap-3 justify-end flex-wrap">
+                    <button id="copyEmailBtn" class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">Copy Text</button>
+                    <button id="yahooBtn" class="px-4 py-2 bg-[#6001D2] text-white rounded-lg text-sm font-semibold hover:bg-[#4a00a0] transition-colors"><i class="fab fa-yahoo mr-1"></i> Yahoo</button>
+                    <button id="outlookBtn" class="px-4 py-2 bg-[#0078D4] text-white rounded-lg text-sm font-semibold hover:bg-[#005a9e] transition-colors"><i class="fab fa-microsoft mr-1"></i> Outlook</button>
+                    <button id="gmailBtn" class="px-4 py-2 bg-[#EA4335] text-white rounded-lg text-sm font-semibold hover:bg-[#D93025] transition-colors"><i class="fab fa-google mr-1"></i> Gmail</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= HISTORY VIEW ================= -->
+        <div id="historyView" class="view-section hidden max-w-5xl mx-auto space-y-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all ui-str" data-key="tabHistory">Saved Documents</h2>
+                <div class="flex gap-2">
+                    <button id="backupBtn" class="px-3 py-1.5 bg-slate-800 text-white rounded text-xs font-semibold hover:bg-slate-700"><i class="fas fa-download mr-1"></i> Backup</button>
+                    <button id="restoreBtn" class="px-3 py-1.5 bg-brand-100 text-brand-700 rounded text-xs font-semibold hover:bg-brand-200"><i class="fas fa-upload mr-1"></i> Restore</button>
+                    <input type="file" id="restoreFileInput" class="hidden">
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 min-h-[400px]">
+                <div id="historyListDiv" class="space-y-3">
+                    <!-- History injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= DASHBOARD & SETTINGS VIEWS ================= -->
+        <div id="dashboardView" class="view-section hidden max-w-5xl mx-auto space-y-6">
+            <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-4 ui-str" data-key="tabDash">Dashboard</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Total (30d)</p><h3 id="total30dSpan" class="text-2xl font-black text-slate-800 dark:text-white">$0</h3></div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Paid Docs</p><h3 id="paidCountSpan" class="text-2xl font-black text-emerald-500">0</h3></div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Total Docs</p><h3 id="docCountSpan" class="text-2xl font-black text-brand-500">0</h3></div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Overdue</p><h3 id="overdueCountSpan" class="text-2xl font-black text-rose-500">0</h3></div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 h-80">
+                <canvas id="weeklyChartCanvas"></canvas>
+            </div>
+        </div>
+
+        <div id="settingsView" class="view-section hidden max-w-3xl mx-auto space-y-6">
+            <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-4 ui-str" data-key="tabSettings">Settings & Tools</h2>
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-6">
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white"><i class="fas fa-paint-roller text-brand-500 mr-2"></i> Design & Typography</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Document Font</label>
+                            <select id="invoiceFont" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                                <option value="font-sans">Modern (Sans-Serif)</option>
+                                <option value="font-serif">Classic (Serif)</option>
+                                <option value="font-mono">Technical (Monospace)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Background Color</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" id="invoiceBgColor" value="#ffffff" class="h-10 w-16 cursor-pointer bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg p-1">
+                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400" id="hexColorLabel">#ffffff</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide flex justify-between">
+                                <span>Opacity</span> <span id="opacityLabel" class="text-brand-500">100%</span>
+                            </label>
+                            <input type="range" id="invoiceBgOpacity" min="0" max="100" value="100" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer mt-2">
+                        </div>
+                    </div>
+                </div>
+                <hr class="border-slate-200 dark:border-slate-700 my-6">
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white">Brand Logo</h3>
+                    <div id="logoUploadTrigger" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-brand-500 mb-2"></i>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300">Click to upload logo</p>
+                        <p class="text-xs text-slate-400 mt-1">PNG, JPG, SVG</p>
+                        <input type="file" id="logoFileInput" accept="image/*" class="hidden">
+                    </div>
+                    <div id="logoPreviewWrap" class="mt-4 flex gap-4 items-center hidden">
+                        <img id="logoPreviewImg" src="" alt="Logo" class="max-h-16 rounded shadow-sm border border-slate-200">
+                        <button id="removeLogoBtn" class="text-xs text-rose-500 hover:text-rose-700 font-bold uppercase tracking-wide px-3 py-1 bg-rose-50 rounded-md">Remove</button>
+                    </div>
+                </div>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-6">
+
+                <!-- SECURITY & PRIVACY SECTION -->
+                <div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800 dark:text-white"><i class="fas fa-lock text-emerald-500 mr-2"></i> Security & Privacy</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Protect your local invoices with AES encryption. A master PIN will be required to open the app.</p>
+                    
+                    <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div>
+                            <p class="font-semibold text-sm text-slate-800 dark:text-white" id="securityStatusText">App Lock is Disabled</p>
+                            <p class="text-xs text-rose-500 mt-1 font-medium">Warning: Forgotten PINs cannot be recovered.</p>
+                        </div>
+                        <button id="toggleSecurityBtn" class="bg-slate-800 hover:bg-slate-900 text-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                            Enable PIN Lock
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <h3 class="font-bold text-lg mb-4 text-rose-600">Danger Zone</h3>
+                    <button id="burnerModeBtn" class="bg-rose-100 text-rose-700 hover:bg-rose-600 hover:text-white px-5 py-2.5 rounded-lg font-bold transition-colors w-full"><i class="fas fa-fire mr-2"></i> Burner Mode (Erase All Local Data)</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER (SOLID BLACK) -->
+    <footer class="mt-auto py-6 bg-black no-print">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm font-medium text-slate-400">
+            <div class="text-center sm:text-left">
+                <p>&copy; <span id="currentYear"></span> Zahpy Business Pro Edition. All rights reserved.</p>
+            </div>
+            <div class="text-center sm:text-right flex flex-col sm:items-end justify-center">
+                <button id="termsBtn" class="underline hover:text-white transition-colors font-semibold">Terms & Conditions</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications WITH AMPLIFIED GLASSMORPHISM OVERLAY -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none no-print"></div>
+
+    <!-- Modals WITH AMPLIFIED GLASSMORPHISM OVERLAY -->
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xl z-50 hidden items-center justify-center p-4 no-print transition-all duration-300">
+        
+        <!-- Terms Modal -->
+        <div id="termsModal" class="modal-card bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col hidden shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-white">📜 Terms & Conditions</h2>
+            </div>
+            <div class="p-6 overflow-y-auto text-slate-600 dark:text-slate-300 text-sm space-y-5">
+                <div class="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800/50 font-medium">
+                    <strong>Important Notice:</strong> Zahpy is a completely offline application running inside your browser. We do not use cloud servers. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Zahpy is not responsible for any loss of data.</strong> Clearing your browser cache will permanently erase your invoices if they are not backed up.
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">1. Offline-First Architecture & Data Ownership</h4>
+                    <p class="leading-relaxed">Zahpy Pro operates entirely within your web browser. We do not transmit, sync, or store your invoices on any external cloud servers or databases. Your data belongs solely to you and is stored locally on your device.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">2. How to Safeguard Your Data</h4>
+                    <p class="leading-relaxed mb-3">Because your data is not backed up to a cloud server, you are responsible for maintaining your own records. To prevent data loss due to device failure, browser updates, or accidental cache clearing, we strongly advise the following workflow:</p>
+                    <ul class="space-y-3 ml-1">
+                        <li class="flex items-start gap-3"><i class="fas fa-file-pdf mt-1 text-rose-500 w-4 text-center"></i> <span><strong>Export as PDF:</strong> Always download a final PDF copy of every document you create. Store these in a secure folder on your computer or a personal cloud drive.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-save mt-1 text-brand-500 w-4 text-center"></i> <span><strong>Save to History:</strong> Click "Save to History" to keep an editable version in your browser's local storage for future reference.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-print mt-1 text-slate-500 w-4 text-center"></i> <span><strong>Print Physical Copies:</strong> For critical financial records, print hard copies to maintain in your physical filing systems.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-download mt-1 text-emerald-500 w-4 text-center"></i> <span><strong>Backup Workspaces:</strong> Go to the History tab regularly and use the "Backup" button to download a complete file of your entire Zahpy database.</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">3. Limitation of Liability</h4>
+                    <p class="leading-relaxed">Zahpy Business Pro and its developers accept no liability for financial loss, lost documents, or data corruption resulting from the use of this software, browser/OS updates, hardware failure, or accidental cache clearance.</p>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+                <button class="modal-close bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-200 dark:text-slate-900 text-white px-6 py-2.5 rounded-lg font-bold transition-colors">I Understand and agree</button>
+            </div>
+        </div>
+
+        <!-- Confirm Modal -->
+        <div id="confirmModal" class="modal-card bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md flex flex-col hidden shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                    <i id="confirmIcon" class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 id="confirmTitle" class="text-xl font-bold text-slate-800 dark:text-white mb-2">Are you sure?</h3>
+                <p id="confirmDesc" class="text-sm text-slate-500 dark:text-slate-400 mb-6">This action cannot be undone.</p>
+                
+                <!-- Optional Input for PIN -->
+                <input type="password" id="confirmPinInput" class="hidden w-full text-center tracking-[0.5em] font-mono text-2xl mb-6 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-lg p-3" placeholder="••••">
+
+                <div class="flex gap-3">
+                    <button id="confirmCancelBtn" class="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg transition-colors">Cancel</button>
+                    <button id="confirmActionBtn" class="flex-1 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition-colors">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL SCREEN LOCK OVERLAY -->
+    <div id="lockScreenOverlay" class="fixed inset-0 bg-slate-100 dark:bg-slate-900 z-[100] flex flex-col items-center justify-center hidden">
+        <div class="w-full max-w-sm px-6 text-center">
+            <div class="w-20 h-20 bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">App Locked</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-8">Enter your master PIN to decrypt your workspace.</p>
+            
+            <input type="password" id="unlockPinInput" class="w-full text-center tracking-[0.75em] font-mono text-3xl mb-6 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-xl p-4 focus:border-brand-500 outline-none transition-colors" placeholder="••••">
+            
+            <button id="unlockAppBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white px-5 py-3.5 rounded-xl font-bold shadow-sm transition-colors mb-4">
+                Decrypt & Open
+            </button>
+            <p id="unlockError" class="text-rose-500 text-sm font-semibold hidden">Incorrect PIN. Please try again.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- Translations ---
+        const i18n = {
+            en: {
+                tabCreate: "Create", tabCalc: "Calculator", tabEmail: "Email", tabHistory: "History", tabDash: "Dashboard", tabSettings: "Settings",
+                panelRegional: "Regional Settings", panelDocSetup: "Document Setup", panelClientBiz: "Client & Business", panelItems: "Line Items", panelFin: "Financials & Terms",
+                lblLang: "Language", lblCurr: "Currency", lblDocType: "Doc Type", lblDocNum: "Document #", lblDate: "Date", lblStatus: "Status",
+                lblYourBiz: "Your Business Name", lblClientName: "Client Name", lblClientEmail: "Client Email",
+                thDesc: "Description", thQty: "Unit", thPrice: "Price", btnAddItem: "Add Line Item",
+                lblTax: "Tax (%)", lblDisc: "Discount Amt", lblDue: "Due Date", lblLate: "Late Fee (%)", lblNotes: "Notes",
+                btnSave: "Save to History", btnPDF: "Export PDF", titlePreview: "Live Preview",
+                billTo: "Bill To", sub: "Subtotal", tax: "Tax", disc: "Discount", late: "Late Fee", total: "TOTAL DUE",
+                pay: "Pay This Invoice", noPay: "No payment links configured",
+                auth: "AUTHORIZED SIGNATURE", invoice: "INVOICE", estimate: "ESTIMATE", desc: "Description", amount: "Amount", notes: "Notes"
+            },
+            es: {
+                tabCreate: "Crear", tabCalc: "Calculadora", tabEmail: "Correo", tabHistory: "Historial", tabDash: "Panel", tabSettings: "Ajustes",
+                panelRegional: "Ajustes Regionales", panelDocSetup: "Configuración", panelClientBiz: "Cliente y Empresa", panelItems: "Artículos", panelFin: "Finanzas y Términos",
+                lblLang: "Idioma", lblCurr: "Moneda", lblDocType: "Tipo", lblDocNum: "Número", lblDate: "Fecha", lblStatus: "Estado",
+                lblYourBiz: "Tu Empresa", lblClientName: "Nombre Cliente", lblClientEmail: "Email Cliente",
+                thDesc: "Descripción", thQty: "Unidad", thPrice: "Precio", btnAddItem: "Añadir Artículo",
+                lblTax: "Impuesto (%)", lblDisc: "Descuento", lblDue: "Vencimiento", lblLate: "Cargo por Mora (%)", lblNotes: "Notas",
+                btnSave: "Guardar", btnPDF: "Exportar PDF", titlePreview: "Vista Previa",
+                billTo: "Facturar a", sub: "Subtotal", tax: "Impuesto", disc: "Descuento", late: "Mora", total: "TOTAL",
+                pay: "Pagar Factura", noPay: "Sin enlaces de pago",
+                auth: "FIRMA AUTORIZADA", invoice: "FACTURA", estimate: "PRESUPUESTO", desc: "Descripción", amount: "Importe", notes: "Notas"
+            },
+            fr: {
+                tabCreate: "Créer", tabCalc: "Calculatrice", tabEmail: "Email", tabHistory: "Historique", tabDash: "Tableau", tabSettings: "Paramètres",
+                panelRegional: "Région", panelDocSetup: "Document", panelClientBiz: "Client et Entreprise", panelItems: "Articles", panelFin: "Finances",
+                lblLang: "Langue", lblCurr: "Devise", lblDocType: "Type", lblDocNum: "Numéro", lblDate: "Date", lblStatus: "Statut",
+                lblYourBiz: "Votre Entreprise", lblClientName: "Nom Client", lblClientEmail: "Email Client",
+                thDesc: "Description", thQty: "Unité", thPrice: "Prix", btnAddItem: "Ajouter Article",
+                lblTax: "Taxe (%)", lblDisc: "Remise", lblDue: "Échéance", lblLate: "Retard (%)", lblNotes: "Notes",
+                btnSave: "Enregistrer", btnPDF: "Exporter PDF", titlePreview: "Aperçu",
+                billTo: "Facturer à", sub: "Sous-total", tax: "Taxe", disc: "Remise", late: "Retard", total: "TOTAL",
+                pay: "Payer la Facture", noPay: "Aucun lien",
+                auth: "SIGNATURE", invoice: "FACTURE", estimate: "DEVIS", desc: "Description", amount: "Montant", notes: "Notes"
+            },
+            de: {
+                tabCreate: "Erstellen", tabCalc: "Rechner", tabEmail: "E-Mail", tabHistory: "Verlauf", tabDash: "Dashboard", tabSettings: "Einstellungen",
+                panelRegional: "Region", panelDocSetup: "Dokument", panelClientBiz: "Kunde & Firma", panelItems: "Artikel", panelFin: "Finanzen",
+                lblLang: "Sprache", lblCurr: "Währung", lblDocType: "Typ", lblDocNum: "Nummer", lblDate: "Datum", lblStatus: "Status",
+                lblYourBiz: "Deine Firma", lblClientName: "Kundenname", lblClientEmail: "Kunden-E-Mail",
+                thDesc: "Beschreibung", thQty: "Einheit", thPrice: "Preis", btnAddItem: "Artikel Hinzufügen",
+                lblTax: "Steuer (%)", lblDisc: "Rabatt", lblDue: "Fälligkeit", lblLate: "Verzug (%)", lblNotes: "Notizen",
+                btnSave: "Speichern", btnPDF: "PDF Exportieren", titlePreview: "Vorschau",
+                billTo: "Rechnung an", sub: "Zwischensumme", tax: "Steuer", disc: "Rabatt", late: "Verzug", total: "GESAMT",
+                pay: "Rechnung Bezahlen", noPay: "Keine Links",
+                auth: "UNTERSCHRIFT", invoice: "RECHNUNG", estimate: "ANGEBOT", desc: "Beschreibung", amount: "Betrag", notes: "Notizen"
+            }
+        };
+
+        // --- State ---
+        let currentLang = 'en';
+        let items = [{ name: "Brand Identity Kit", qty: 1, price: 480 }, { name: "Social Media Pack", qty: 2, price: 95 }];
+        let historyInvoices = [];
+        let chartInstance = null;
+        let confirmCallback = null;
+        let savedLogo = null;
+        
+        // Security State
+        let sessionPin = null;
+
+        // --- Core UI Functions ---
+        function getT() { return i18n[currentLang] || i18n['en']; }
+        function eHTML(str) { return (str||'').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+        
+        // GLASSMORPHISM TOAST
+        function showToast(msg, type='success') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast-enter flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-sm pointer-events-auto backdrop-blur-md border border-white/20 ${type==='error'?'bg-rose-600/90':'bg-emerald-600/90'}`;
+            t.innerHTML = `<i class="fas ${type==='error'?'fa-exclamation-circle':'fa-check-circle'}"></i> <span>${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => { t.classList.replace('toast-enter', 'toast-exit'); setTimeout(()=>t.remove(), 300); }, 3000);
+        }
+
+        // UPGRADED CONFIRM MODAL (Supports PIN inputs)
+        function openConfirm(title, desc, btnText, btnColorClass, iconClass, requiresInput, callback) {
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmDesc').innerText = desc;
+            
+            const actionBtn = document.getElementById('confirmActionBtn');
+            actionBtn.innerText = btnText;
+            actionBtn.className = `flex-1 px-4 py-2.5 text-white font-bold rounded-lg transition-colors ${btnColorClass}`;
+            
+            document.getElementById('confirmIcon').className = `fas ${iconClass}`;
+            
+            const pinInput = document.getElementById('confirmPinInput');
+            if (requiresInput) {
+                pinInput.classList.remove('hidden');
+                pinInput.value = '';
+                setTimeout(() => pinInput.focus(), 100);
+            } else {
+                pinInput.classList.add('hidden');
+            }
+
+            confirmCallback = () => {
+                if (requiresInput) callback(pinInput.value);
+                else callback();
+            };
+
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.getElementById('modalOverlay').classList.add('flex');
+            document.getElementById('confirmModal').classList.remove('hidden');
+            document.getElementById('termsModal').classList.add('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.getElementById('modalOverlay').classList.remove('flex');
+            document.querySelectorAll('.modal-card').forEach(c => c.classList.add('hidden'));
+        }
+
+        function applyTranslations() {
+            const t = getT();
+            document.querySelectorAll('.ui-str').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (t[key]) {
+                    if (el.tagName === 'INPUT' && el.type === 'button') el.value = t[key];
+                    else el.innerText = t[key];
+                }
+            });
+            renderItems();
+            updatePreview();
+        }
+
+        // --- Security & Data Handling ---
+        function getHashed(pin) {
+            return CryptoJS.SHA256(pin + "_zahpy_salt_26").toString();
+        }
+
+        function encryptData(dataStr, pin) {
+            return CryptoJS.AES.encrypt(dataStr, pin).toString();
+        }
+
+        function decryptData(cipherText, pin) {
+            try {
+                const bytes = CryptoJS.AES.decrypt(cipherText, pin);
+                return bytes.toString(CryptoJS.enc.Utf8);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function toggleSecurity() {
+            const storedHash = localStorage.getItem('zahpy_pin_hash');
+            
+            if (!storedHash) {
+                openConfirm('Create PIN', 'Enter a memorable PIN. If you forget this, your data is permanently lost.', 'Enable Lock', 'bg-emerald-600 hover:bg-emerald-700', 'fa-lock', true, (pin) => {
+                    if (!pin || pin.length < 4) { showToast('PIN must be at least 4 characters.', 'error'); return; }
+                    localStorage.setItem('zahpy_pin_hash', getHashed(pin));
+                    sessionPin = pin;
+                    saveToHistory();
+                    updateSecurityUI();
+                    showToast('App Locked Successfully.');
+                });
+            } else {
+                openConfirm('Disable PIN Lock', 'Enter your current PIN to decrypt your workspace and disable the lock screen.', 'Disable Lock', 'bg-rose-600 hover:bg-rose-700', 'fa-unlock', true, (pin) => {
+                    if (getHashed(pin) === storedHash) {
+                        localStorage.removeItem('zahpy_pin_hash');
+                        sessionPin = null;
+                        saveToHistory();
+                        updateSecurityUI();
+                        showToast('Security Lock Disabled.');
+                    } else {
+                        showToast('Incorrect PIN.', 'error');
+                    }
+                });
+            }
+        }
+
+        function updateSecurityUI() {
+            const storedHash = localStorage.getItem('zahpy_pin_hash');
+            const statusText = document.getElementById('securityStatusText');
+            const toggleBtn = document.getElementById('toggleSecurityBtn');
+            
+            if (storedHash) {
+                statusText.innerText = "App Lock is Enabled";
+                statusText.classList.replace('text-slate-800', 'text-emerald-600');
+                statusText.classList.replace('dark:text-white', 'dark:text-emerald-400');
+                toggleBtn.innerText = "Disable PIN Lock";
+                toggleBtn.classList.replace('bg-slate-800', 'bg-rose-100');
+                toggleBtn.classList.replace('text-white', 'text-rose-700');
+                toggleBtn.classList.remove('dark:bg-white', 'dark:text-slate-900', 'hover:bg-slate-900', 'dark:hover:bg-slate-200');
+                toggleBtn.classList.add('hover:bg-rose-200');
+            } else {
+                statusText.innerText = "App Lock is Disabled";
+                statusText.classList.replace('text-emerald-600', 'text-slate-800');
+                statusText.classList.replace('dark:text-emerald-400', 'dark:text-white');
+                toggleBtn.innerText = "Enable PIN Lock";
+                toggleBtn.classList.replace('bg-rose-100', 'bg-slate-800');
+                toggleBtn.classList.replace('text-rose-700', 'text-white');
+                toggleBtn.classList.add('dark:bg-white', 'dark:text-slate-900', 'hover:bg-slate-900', 'dark:hover:bg-slate-200');
+                toggleBtn.classList.remove('hover:bg-rose-200');
+            }
+        }
+
+        function checkBootSecurity() {
+            const storedHash = localStorage.getItem('zahpy_pin_hash');
+            const mainContent = document.getElementById('appMainContent');
+            const lockScreen = document.getElementById('lockScreenOverlay');
+            
+            if (storedHash) {
+                mainContent.classList.add('hidden');
+                lockScreen.classList.remove('hidden');
+                
+                document.getElementById('unlockAppBtn').onclick = () => {
+                    const entered = document.getElementById('unlockPinInput').value;
+                    if (getHashed(entered) === storedHash) {
+                        sessionPin = entered;
+                        lockScreen.classList.add('hidden');
+                        mainContent.classList.remove('hidden');
+                        loadDataFromStorage(); 
+                    } else {
+                        document.getElementById('unlockError').classList.remove('hidden');
+                        setTimeout(() => document.getElementById('unlockError').classList.add('hidden'), 2000);
+                    }
+                };
+            } else {
+                mainContent.classList.remove('hidden');
+                loadDataFromStorage();
+            }
+        }
+
+        function loadDataFromStorage() {
+            const savedStr = localStorage.getItem('zahpy_pro_v2');
+            if (savedStr) {
+                let parsed = null;
+                if (sessionPin) {
+                    const decrypted = decryptData(savedStr, sessionPin);
+                    if (decrypted) parsed = JSON.parse(decrypted);
+                } else {
+                    try { parsed = JSON.parse(savedStr); } catch(e) {}
+                }
+                
+                if (parsed) {
+                    historyInvoices = parsed;
+                    renderHistoryList();
+                    updateDashboard();
+                }
+            }
+            renderItems();
+            updatePreview();
+        }
+
+        // --- Invoice Logic ---
+        function renderItems() {
+            const cont = document.getElementById('itemsContainer');
+            cont.innerHTML = '';
+            const curr = document.getElementById('docCurrency').value;
+            items.forEach((it, idx) => {
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-12 gap-3 items-center';
+                row.innerHTML = `
+                    <div class="col-span-6">
+                        <input type="text" class="item-name w-full text-sm rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white px-3 py-2 transition-colors" value="${eHTML(it.name)}" placeholder="Item name">
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" class="item-qty w-full text-sm rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white px-3 py-2 transition-colors" value="${it.qty}" step="0.5">
+                    </div>
+                    <div class="col-span-3 relative flex items-center">
+                        <span class="absolute left-3 text-slate-400 text-sm font-medium select-none pointer-events-none">${curr}</span>
+                        <input type="number" class="item-price w-full text-sm rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white pl-7 pr-3 py-2 transition-colors" value="${it.price}" step="0.5">
+                    </div>
+                    <div class="col-span-1 text-right">
+                        <button class="remove-item text-slate-400 hover:text-rose-500 transition-colors p-2" data-idx="${idx}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                cont.appendChild(row);
+            });
+            document.querySelectorAll('.item-name').forEach((inp, i) => inp.addEventListener('input', e => { items[i].name = e.target.value; updatePreview(); }));
+            document.querySelectorAll('.item-qty').forEach((inp, i) => inp.addEventListener('input', e => { items[i].qty = parseFloat(e.target.value)||0; updatePreview(); }));
+            document.querySelectorAll('.item-price').forEach((inp, i) => inp.addEventListener('input', e => { items[i].price = parseFloat(e.target.value)||0; updatePreview(); }));
+            document.querySelectorAll('.remove-item').forEach(btn => btn.addEventListener('click', e => { items.splice(parseInt(btn.getAttribute('data-idx')), 1); renderItems(); updatePreview(); }));
+        }
+
+        // PERFECT DATA MAPPING: Exact match to HTML IDs for seamless Save & Load
+        function getFormData() {
+            const v = id => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
+            let sub = items.reduce((s,i) => s + (i.qty||0)*(i.price||0), 0);
+            let taxR = parseFloat(v('taxRate'))||0;
+            let disc = parseFloat(v('discountAmount'))||0;
+            let lateR = parseFloat(v('lateFee'))||0;
+            let taxAmt = sub * (taxR/100);
+            let total = sub + taxAmt - disc;
+            let due = new Date(v('dueDate'));
+            let lateAmt = (due < new Date() && lateR > 0) ? total * (lateR/100) : 0;
+            
+            return {
+                uiLang: v('uiLang'), 
+                docCurrency: v('docCurrency'), 
+                docType: v('docType'), 
+                docNumber: v('docNumber'),
+                docDate: v('docDate'), 
+                docStatus: v('docStatus'), 
+                businessName: v('businessName'),
+                clientName: v('clientName'), 
+                clientEmail: v('clientEmail'), 
+                unitLabel: v('unitLabel'),
+                taxRate: v('taxRate'), 
+                discountAmount: v('discountAmount'), 
+                dueDate: v('dueDate'), 
+                lateFee: v('lateFee'), 
+                paypalUser: v('paypalUser'), 
+                stripeLink: v('stripeLink'), 
+                sigName: v('sigName'), 
+                sigDate: v('sigDate'), 
+                notes: v('notes'),
+                subtotal: sub, 
+                taxAmt: taxAmt, 
+                lateAmt: lateAmt, 
+                finalTotal: total + lateAmt
+            };
+        }
+
+        function updatePreview() {
+            const data = getFormData();
+            const t = getT();
+            
+            const stColor = { 'Draft':'bg-slate-100 text-slate-600', 'Sent':'bg-blue-100 text-blue-700', 'Paid':'bg-emerald-100 text-emerald-700', 'Overdue':'bg-rose-100 text-rose-700' }[data.docStatus] || 'bg-slate-100 text-slate-600';
+
+            let itemsHtml = items.map(i => `
+                <div class="grid grid-cols-12 gap-4 py-3 border-b border-slate-100 last:border-0 items-center">
+                    <div class="col-span-7">
+                        <p class="text-[13px] font-bold text-slate-800">${eHTML(i.name)}</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">${i.qty} ${data.unitLabel} × ${data.docCurrency}${i.price.toFixed(2)}</p>
+                    </div>
+                    <div class="col-span-5 text-right font-medium text-[13px] text-slate-800 font-mono">
+                        ${data.docCurrency}${(i.qty*i.price).toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+
+            let paymentLinksHtml = '';
+            if(data.paypalUser) {
+                paymentLinksHtml += `
+                <div class="flex items-center gap-3 mb-3">
+                    <div id="qrCodeContainer" class="p-1 bg-white border border-slate-200 rounded shadow-sm"></div>
+                    <div>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">PayPal</p>
+                        <p class="text-[11px] text-slate-800 font-bold">paypal.me/${eHTML(data.paypalUser)}</p>
+                    </div>
+                </div>`;
+            }
+            if(data.stripeLink) {
+                paymentLinksHtml += `
+                <div class="flex items-center gap-3">
+                    <div class="w-[60px] h-[60px] bg-indigo-50 border border-indigo-100 rounded flex items-center justify-center text-indigo-500 text-2xl shadow-sm"><i class="fab fa-stripe-s"></i></div>
+                    <div>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Stripe / Card</p>
+                        <p class="text-[11px] text-slate-800 font-bold truncate max-w-[150px]">${eHTML(data.stripeLink)}</p>
+                    </div>
+                </div>`;
+            }
+            if(!data.paypalUser && !data.stripeLink) paymentLinksHtml = `<p class="text-[10px] italic text-slate-400">${t.noPay}</p>`;
+
+            let logoHtml = savedLogo ? `<img src="${savedLogo}" class="max-h-16 mb-4 object-contain">` : '';
+            // Signature size increased by approximately 15% - changed from text-xl (~20px) to text-2xl (~24px)
+            let sigHtml = data.sigName ? `<div class="font-signature text-2xl text-slate-800 absolute bottom-3">${eHTML(data.sigName)}</div>` : '';
+
+            // Smart Badge Logic
+            let statusHtml = '';
+            if (['Paid', 'Overdue'].includes(data.docStatus)) {
+                statusHtml = `<div class="mt-2"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${stColor}">${data.docStatus}</span></div>`;
+            }
+
+            let html = `
+                <div class="flex justify-between items-start mb-12">
+                    <div>
+                        ${logoHtml}
+                        <h1 class="text-3xl font-black text-slate-900 tracking-tight">${eHTML(data.businessName)}</h1>
+                    </div>
+                    <div class="text-right">
+                        <div class="inline-block bg-slate-900 text-white px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase mb-3 shadow-sm">${t[data.docType==='INVOICE'?'invoice':'estimate']}</div>
+                        <p class="text-slate-500 text-xs font-semibold">#${eHTML(data.docNumber)} &middot; ${data.docDate}</p>
+                        ${statusHtml}
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">${t.billTo}</p>
+                    <p class="text-sm font-bold text-slate-800">${eHTML(data.clientName)}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">${eHTML(data.clientEmail)}</p>
+                </div>
+
+                <div class="mb-8 flex-1">
+                    <div class="grid grid-cols-12 gap-4 pb-2 border-b-2 border-slate-800 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        <div class="col-span-7">${t.desc}</div>
+                        <div class="col-span-5 text-right">${t.amount}</div>
+                    </div>
+                    <div class="mt-2">${itemsHtml}</div>
+                </div>
+
+                <div class="flex justify-end mb-16">
+                    <div class="w-full max-w-[280px] text-[13px]">
+                        <div class="flex justify-between py-1.5 text-slate-600">
+                            <span>${t.sub}</span>
+                            <span class="font-medium text-slate-800 font-mono">${data.docCurrency}${data.subtotal.toFixed(2)}</span>
+                        </div>
+                        ${parseFloat(data.taxRate) > 0 ? `
+                        <div class="flex justify-between py-1.5 text-slate-600">
+                            <span>${t.tax} (${data.taxRate}%)</span>
+                            <span class="font-medium text-slate-800 font-mono">${data.docCurrency}${data.taxAmt.toFixed(2)}</span>
+                        </div>` : ''}
+                        ${parseFloat(data.discountAmount) > 0 ? `
+                        <div class="flex justify-between py-1.5 text-emerald-600">
+                            <span>${t.disc}</span>
+                            <span class="font-medium font-mono">-${data.docCurrency}${parseFloat(data.discountAmount).toFixed(2)}</span>
+                        </div>` : ''}
+                        ${data.lateAmt > 0 ? `
+                        <div class="flex justify-between py-1.5 text-rose-600">
+                            <span>${t.late} (${data.lateFee}%)</span>
+                            <span class="font-medium font-mono">${data.docCurrency}${data.lateAmt.toFixed(2)}</span>
+                        </div>` : ''}
+                        <div class="flex justify-between items-center py-4 mt-2 border-t-2 border-slate-800">
+                            <span class="font-black text-slate-800 uppercase tracking-wider">${t.total}</span>
+                            <span class="text-xl font-black tracking-tight text-slate-900 font-mono">${data.docCurrency}${data.finalTotal.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer area -->
+                <div class="grid grid-cols-12 gap-6 pt-8 border-t border-slate-200 mt-auto">
+                    <div class="col-span-12 sm:col-span-6">
+                        ${paymentLinksHtml}
+                    </div>
+                    <div class="col-span-12 sm:col-span-6 text-[11px] text-slate-500 text-right">
+                        <span class="font-bold text-slate-400 block mb-1 uppercase tracking-widest text-[9px]">${t.notes}</span>
+                        <div class="w-full text-right pb-8">
+                            ${eHTML(data.notes)}
+                        </div>
+                        
+                        <div class="border-t border-slate-300 pt-2 text-center relative mt-8 flex flex-col items-center">
+                            <div class="absolute bottom-full left-0 w-full flex justify-center mb-1">
+                                ${sigHtml}
+                            </div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${t.auth}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">${eHTML(data.sigDate) || ''}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('previewPrintArea').innerHTML = html;
+            
+            if(data.paypalUser) {
+                setTimeout(() => {
+                    let qc = document.getElementById('qrCodeContainer');
+                    if(qc) { qc.innerHTML=''; new QRCode(qc, {text:`https://paypal.me/${data.paypalUser}/${Math.round(data.finalTotal)}`, width:60, height:60}); }
+                }, 50);
+            }
+        }
+
+        // --- History, Dashboard & PDF Logic ---
+        function saveToHistory() {
+            const d = getFormData();
+            
+            // Replaces the old shorthand saving to save using identical exact keys
+            historyInvoices = historyInvoices.filter(h => h.docNumber !== d.docNumber);
+            historyInvoices.unshift({ id: Date.now(), items: JSON.parse(JSON.stringify(items)), ...d });
+            
+            const dataToSave = JSON.stringify(historyInvoices);
+            const finalSaveString = sessionPin ? encryptData(dataToSave, sessionPin) : dataToSave;
+            
+            localStorage.setItem('zahpy_pro_v2', finalSaveString);
+            showToast('Saved to History');
+            renderHistoryList();
+            updateDashboard();
+        }
+
+        function renderHistoryList() {
+            const cont = document.getElementById('historyListDiv');
+            if(!historyInvoices.length) { cont.innerHTML = '<p class="text-sm text-slate-500 italic">No saved documents yet.</p>'; return; }
+            cont.innerHTML = historyInvoices.map(h => `
+                <div class="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 uppercase">${h.docType}</span>
+                            <span class="text-sm font-bold text-slate-800 dark:text-white">#${h.docNumber}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${h.clientName} &middot; ${h.docDate} &middot; ${h.docCurrency}${h.finalTotal.toFixed(2)}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="load-hist px-3 py-1.5 bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded text-xs font-semibold dark:text-white hover:text-brand-600 dark:hover:bg-slate-500 transition-colors" data-id="${h.id}">Load</button>
+                        <button class="del-hist px-3 py-1.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors" data-id="${h.id}">Del</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.load-hist').forEach(b => b.addEventListener('click', e => {
+                const id = parseInt(b.getAttribute('data-id'));
+                const h = historyInvoices.find(x => x.id === id);
+                if(h) {
+                    items = JSON.parse(JSON.stringify(h.items));
+                    
+                    // Because we now save exact keys, loading is a 1-to-1 match!
+                    ['uiLang','docCurrency','docType','docNumber','docDate','docStatus','businessName','clientName','clientEmail','unitLabel','taxRate','discountAmount','dueDate','lateFee','paypalUser','stripeLink','sigName','sigDate','notes'].forEach(k => {
+                        if(h[k] !== undefined && document.getElementById(k)) document.getElementById(k).value = h[k];
+                    });
+                    
+                    currentLang = h.uiLang || 'en';
+                    applyTranslations();
+                    document.querySelector('[data-target="createView"]').click();
+                    showToast('Document Loaded');
+                }
+            }));
+            
+            document.querySelectorAll('.del-hist').forEach(b => b.addEventListener('click', e => {
+                const id = parseInt(b.getAttribute('data-id'));
+                openConfirm('Delete Document?', 'This invoice will be permanently removed from your local history.', 'Delete', 'bg-rose-600 hover:bg-rose-700', 'fa-trash', false, () => {
+                    historyInvoices = historyInvoices.filter(x => x.id !== id);
+                    const dataToSave = JSON.stringify(historyInvoices);
+                    localStorage.setItem('zahpy_pro_v2', sessionPin ? encryptData(dataToSave, sessionPin) : dataToSave);
+                    renderHistoryList();
+                    updateDashboard();
+                    showToast('Document Deleted');
+                });
+            }));
+        }
+
+        function updateDashboard() {
+            let total30=0, paid=0, over=0;
+            const now = new Date();
+            const weekData = [0,0,0,0,0,0,0];
+            
+            historyInvoices.forEach(h => {
+                const d = new Date(h.docDate);
+                if ((now-d)/86400000 <= 30 && h.docType==='INVOICE') total30 += h.finalTotal;
+                if (h.docStatus==='Paid') paid++;
+                if (h.docStatus==='Overdue') over++;
+                if (h.docType==='INVOICE') weekData[d.getDay()] += h.finalTotal;
+            });
+            
+            document.getElementById('total30dSpan').innerText = `$${total30.toFixed(2)}`;
+            document.getElementById('paidCountSpan').innerText = paid;
+            document.getElementById('docCountSpan').innerText = historyInvoices.length;
+            document.getElementById('overdueCountSpan').innerText = over;
+            
+            const ctx = document.getElementById('weeklyChartCanvas');
+            if(chartInstance) chartInstance.destroy();
+            const isDark = document.body.classList.contains('dark');
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], datasets: [{ label: 'Invoiced ($)', data: weekData, backgroundColor: '#0ea5e9', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { border: { display: false }, grid: { color: isDark ? '#334155' : '#e2e8f0' }, ticks: { color: isDark ? '#94a3b8' : '#64748b' } }, x: { border: { display: false }, grid: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#64748b' } } } }
+            });
+        }
+
+        // --- Email AI & Design Settings ---
+        const emailTemplates = {
+            standard: { name: "Standard", body: "Hi {clientName},\n\nPlease find attached {docType} #{docNumber} for the amount of {amount}.\nPayment is due by {dueDate}.\n\n{paymentLink}\n\nThank you for your business,\n{businessName}" },
+            formal: { name: "Formal", body: "Dear {clientName},\n\nEnclosed is {docType} #{docNumber} amounting to {amount}, which is due on {dueDate}.\n\n{paymentLink}\n\nSincerely,\n{businessName}" },
+            friendly: { name: "Friendly", body: "Hey {clientName}! 👋\n\nHope you're doing well! Just sending over {docType} #{docNumber} for {amount}. You can complete the payment by {dueDate}.\n\n{paymentLink}\n\nCheers,\n{businessName}" },
+            urgent: { name: "Urgent (Overdue)", body: "URGENT: {docType} #{docNumber} is Overdue\n\nDear {clientName},\n\nThis is an urgent notice that your payment of {amount} was due on {dueDate}. Please remit payment immediately to avoid further late fees.\n\n{paymentLink}\n\nRegards,\n{businessName}" },
+            reminder: { name: "Gentle Reminder", body: "Gentle Reminder: {docType} #{docNumber}\n\nHi {clientName},\n\nJust a quick, gentle reminder that {amount} is due on {dueDate}.\n\n{paymentLink}\n\nThanks,\n{businessName}" },
+            thankyou: { name: "Thank You", body: "Thank You for Your Payment!\n\nHi {clientName},\n\nWe have successfully received your payment for {docType} #{docNumber}. We truly appreciate your business and look forward to working with you again!\n\nBest,\n{businessName}" },
+            project_complete: { name: "Project Completion", body: "Hi {clientName},\n\nIt was fantastic working with you on this project! Attached is the final {docType} #{docNumber} for {amount}.\n\n{paymentLink}\n\nThanks again,\n{businessName}" },
+            followup: { name: "Follow-up", body: "Hi {clientName},\n\nFollowing up on {docType} #{docNumber} sent previously for {amount}. Please let me know if you have any questions or concerns.\n\n{paymentLink}\n\nBest,\n{businessName}" },
+            discount: { name: "Discount Applied", body: "Hi {clientName},\n\nGreat news! We've applied a discount to your account. Attached is your updated {docType} #{docNumber} for {amount}.\n\n{paymentLink}\n\nThanks,\n{businessName}" },
+            short: { name: "Short & Sweet", body: "{docType} #{docNumber} - {amount} attached.\n\n{paymentLink}\n\nThanks, {businessName}" }
+        };
+
+        function generateEmailPreview() {
+            const tplKey = document.getElementById('emailTemplateSelect').value;
+            const tpl = emailTemplates[tplKey];
+            if (!tpl) return;
+            
+            const data = getFormData();
+            
+            // FIXED: Automatically pull the client email into the 'Send To' box!
+            document.getElementById('emailTo').value = data.clientEmail || '';
+            
+            const amt = data.docCurrency + data.finalTotal.toFixed(2);
+            let link = data.paypalUser ? `Payment Link: https://paypal.me/${data.paypalUser}/${Math.round(data.finalTotal)}` : (data.stripeLink ? `Payment Link: ${data.stripeLink}` : '');
+            
+            let txt = tpl.body
+                .replace(/{clientName}/g, data.clientName || 'Client')
+                .replace(/{docType}/g, data.docType === 'INVOICE' ? 'Invoice' : 'Estimate')
+                .replace(/{docNumber}/g, data.docNumber)
+                .replace(/{amount}/g, amt)
+                .replace(/{dueDate}/g, data.dueDate)
+                .replace(/{paymentLink}/g, link)
+                .replace(/{businessName}/g, data.businessName || 'Me');
+                
+            document.getElementById('emailPreviewBox').value = txt;
+        }
+
+        function applyDesignSettings() {
+            const font = document.getElementById('invoiceFont').value;
+            const color = document.getElementById('invoiceBgColor').value;
+            const opacity = document.getElementById('invoiceBgOpacity').value;
+            const paper = document.getElementById('invoicePaper');
+            
+            paper.classList.remove('font-sans', 'font-serif', 'font-mono');
+            paper.classList.add(font);
+            
+            let alpha = Math.round((opacity / 100) * 255).toString(16).padStart(2, '0');
+            paper.style.backgroundColor = `${color}${alpha}`;
+            
+            document.getElementById('hexColorLabel').innerText = color;
+            document.getElementById('opacityLabel').innerText = opacity + '%';
+            
+            localStorage.setItem('zahpy_design', JSON.stringify({ font, color, opacity, logo: savedLogo }));
+        }
+
+        function loadDesignSettings() {
+            const saved = localStorage.getItem('zahpy_design');
+            if (saved) {
+                const s = JSON.parse(saved);
+                if (document.getElementById('invoiceFont')) document.getElementById('invoiceFont').value = s.font || 'font-sans';
+                if (document.getElementById('invoiceBgColor')) document.getElementById('invoiceBgColor').value = s.color || '#ffffff';
+                if (document.getElementById('invoiceBgOpacity')) document.getElementById('invoiceBgOpacity').value = s.opacity || '100';
+                if (s.logo) { savedLogo = s.logo; document.getElementById('logoPreviewImg').src = s.logo; document.getElementById('logoPreviewWrap').classList.remove('hidden'); }
+            }
+            applyDesignSettings();
+        }
+
+        // --- App Initialization & Global Events ---
+        function init() {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            const today = new Date().toISOString().split('T')[0];
+            const nextW = new Date(Date.now()+14*86400000).toISOString().split('T')[0];
+            document.getElementById('docDate').value = today;
+            document.getElementById('dueDate').value = nextW;
+            document.getElementById('sigDate').value = today;
+
+            const savedTheme = localStorage.getItem('zahpy_theme') || 'light';
+            if(savedTheme === 'dark') { document.body.classList.add('dark'); document.getElementById('metaThemeColor').setAttribute('content','#0b1120'); }
+
+            // BOOT SECURITY CHECK
+            updateSecurityUI();
+            checkBootSecurity();
+
+            const emailSel = document.getElementById('emailTemplateSelect');
+            if (emailSel) {
+                emailSel.innerHTML = Object.keys(emailTemplates).map(k => `<option value="${k}">${emailTemplates[k].name}</option>`).join('');
+                emailSel.addEventListener('change', generateEmailPreview);
+            }
+
+            // Design Setup
+            ['invoiceFont', 'invoiceBgColor', 'invoiceBgOpacity'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', applyDesignSettings);
+            });
+            
+            // Logo Upload
+            document.getElementById('logoUploadTrigger').addEventListener('click', () => document.getElementById('logoFileInput').click());
+            document.getElementById('logoFileInput').addEventListener('change', e => {
+                const file = e.target.files[0];
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        savedLogo = ev.target.result;
+                        document.getElementById('logoPreviewImg').src = savedLogo;
+                        document.getElementById('logoPreviewWrap').classList.remove('hidden');
+                        applyDesignSettings();
+                        updatePreview();
+                        showToast('Logo Uploaded');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            document.getElementById('removeLogoBtn').addEventListener('click', () => {
+                savedLogo = null;
+                document.getElementById('logoPreviewWrap').classList.add('hidden');
+                applyDesignSettings();
+                updatePreview();
+            });
+            loadDesignSettings();
+
+            // Email Buttons
+            document.getElementById('copyEmailBtn').addEventListener('click', () => {
+                navigator.clipboard.writeText(document.getElementById('emailPreviewBox').value).then(() => showToast('Copied to clipboard!'));
+            });
+            document.getElementById('gmailBtn').addEventListener('click', () => {
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(document.getElementById('emailTo').value || document.getElementById('clientEmail').value)}&su=Invoice&body=${encodeURIComponent(document.getElementById('emailPreviewBox').value)}`);
+            });
+            document.getElementById('outlookBtn').addEventListener('click', () => {
+                window.open(`https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(document.getElementById('emailTo').value || document.getElementById('clientEmail').value)}&subject=Invoice&body=${encodeURIComponent(document.getElementById('emailPreviewBox').value)}`);
+            });
+            document.getElementById('yahooBtn').addEventListener('click', () => {
+                window.open(`https://compose.mail.yahoo.com/?to=${encodeURIComponent(document.getElementById('emailTo').value || document.getElementById('clientEmail').value)}&subject=Invoice&body=${encodeURIComponent(document.getElementById('emailPreviewBox').value)}`);
+            });
+
+            // Live Updates
+            ['uiLang','docCurrency','docType','docNumber','docDate','docStatus','businessName','clientName','clientEmail','unitLabel','taxRate','discountAmount','dueDate','lateFee','paypalUser','stripeLink','sigName','sigDate','notes'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.addEventListener('input', updatePreview); el.addEventListener('change', updatePreview); }
+            });
+
+            document.getElementById('uiLang').addEventListener('change', (e) => { currentLang = e.target.value; applyTranslations(); });
+            document.getElementById('docCurrency').addEventListener('change', () => { renderItems(); updatePreview(); });
+
+            // Actions
+            document.getElementById('addItemBtn').addEventListener('click', () => { items.push({name:"", qty:1, price:0}); renderItems(); updatePreview(); });
+            document.getElementById('saveHistoryBtn').addEventListener('click', saveToHistory);
+            document.getElementById('printPreviewBtn').addEventListener('click', () => window.print());
+            
+            // BULLETPROOF PDF EXPORT
+            document.getElementById('pdfExportBtn').addEventListener('click', () => {
+                const stickyContainer = document.getElementById('previewStickyWrapper');
+                
+                // 1. Instantly jump to top to fix html2canvas coordinate bug
+                window.scrollTo(0, 0);
+                stickyContainer.scrollTo(0, 0);
+                
+                // 2. Temporarily kill the sticky behavior
+                stickyContainer.style.position = 'relative';
+                stickyContainer.style.overflow = 'visible';
+                
+                showToast('Generating PDF...');
+                
+                // 3. Wait 150ms for browser to redraw perfectly before capturing
+                setTimeout(() => {
+                    html2pdf().set({
+                        margin: 0,
+                        filename: `${document.getElementById('docNumber').value}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    }).from(document.getElementById('invoicePaper')).save().then(() => {
+                        // 4. Restore UI
+                        stickyContainer.style.position = '';
+                        stickyContainer.style.overflow = '';
+                    });
+                }, 150);
+            });
+
+            // Tabs
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-tab').forEach(b => {
+                        b.classList.remove('active', 'bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-brand-600', 'dark:text-brand-400');
+                        b.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:bg-slate-200/50', 'dark:hover:bg-slate-700/50');
+                    });
+                    btn.classList.add('active', 'bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-brand-600', 'dark:text-brand-400');
+                    btn.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:bg-slate-200/50', 'dark:hover:bg-slate-700/50');
+                    
+                    document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+                    document.getElementById(btn.getAttribute('data-target')).classList.remove('hidden');
+                    
+                    if(btn.getAttribute('data-target')==='dashboardView') updateDashboard();
+                    if(btn.getAttribute('data-target')==='emailView') generateEmailPreview();
+                });
+            });
+
+            // Theme
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                document.body.classList.toggle('dark');
+                const isDark = document.body.classList.contains('dark');
+                localStorage.setItem('zahpy_theme', isDark ? 'dark' : 'light');
+                document.getElementById('metaThemeColor').setAttribute('content', isDark ? '#0f172a' : '#e2e8f0');
+                if(!document.getElementById('dashboardView').classList.contains('hidden')) updateDashboard();
+            });
+
+            // Security Toggle
+            document.getElementById('toggleSecurityBtn').addEventListener('click', toggleSecurity);
+
+            // Modals
+            document.getElementById('termsBtn').addEventListener('click', () => {
+                document.getElementById('modalOverlay').classList.remove('hidden');
+                document.getElementById('modalOverlay').classList.add('flex');
+                document.getElementById('termsModal').classList.remove('hidden');
+                document.getElementById('confirmModal').classList.add('hidden');
+            });
+            document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', closeModal));
+            document.getElementById('confirmCancelBtn').addEventListener('click', closeModal);
+            document.getElementById('confirmActionBtn').addEventListener('click', () => { if(confirmCallback) confirmCallback(); closeModal(); });
+
+            // Tools
+            document.getElementById('burnerModeBtn').addEventListener('click', () => {
+                openConfirm('Erase All Data?', 'This will permanently delete all invoices, settings, and history from your browser.', 'Burn Data', 'bg-rose-600 hover:bg-rose-700', 'fa-fire', false, () => {
+                    localStorage.clear();
+                    location.reload();
+                });
+            });
+            
+            // Calculator Events
+            const updateCalc = () => {
+                let q=parseFloat(document.getElementById('calcQty').value)||0, r=parseFloat(document.getElementById('calcRate').value)||0, tx=parseFloat(document.getElementById('calcTax').value)||0, ds=parseFloat(document.getElementById('calcDisc').value)||0;
+                let sub=q*r, tAmt=sub*(tx/100), tot=sub+tAmt-ds;
+                document.getElementById('calcSub').innerText=`$${sub.toFixed(2)}`; document.getElementById('calcTaxAmt').innerText=`$${tAmt.toFixed(2)}`; document.getElementById('calcTotal').innerText=`$${tot.toFixed(2)}`;
+            };
+            ['calcQty','calcRate','calcTax','calcDisc'].forEach(id => document.getElementById(id).addEventListener('input', updateCalc));
+            document.getElementById('applyCalcBtn').addEventListener('click', () => {
+                items.push({name:"Calculated Service", qty:parseFloat(document.getElementById('calcQty').value)||0, price:parseFloat(document.getElementById('calcRate').value)||0});
+                document.getElementById('taxRate').value = document.getElementById('calcTax').value;
+                document.getElementById('discountAmount').value = document.getElementById('calcDisc').value;
+                renderItems(); updatePreview(); showToast('Applied to Invoice');
+                document.querySelector('[data-target="createView"]').click();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

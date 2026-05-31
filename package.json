@@ -1,0 +1,43 @@
+{
+  "name": "zahpy-business-pro",
+  "version": "1.0.0",
+  "description": "Zahpy Business Pro desktop application",
+  "main": "src/main.js",
+  "author": "Zahpy Business Pro",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.zahpy.businesspro",
+    "productName": "Zahpy Business Pro",
+    "directories": {
+      "output": "../../outputs"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "ZahpyBusinessPro.exe"
+    }
+  }
+}

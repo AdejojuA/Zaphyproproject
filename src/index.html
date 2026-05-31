@@ -8,32 +8,14 @@
     <meta name="apple-mobile-web-app-title" content="Zahpy Pro">
     <title>Zahpy Business Pro — Professional Invoicing</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./vendor/fonts/fonts.css">
+    <link rel="stylesheet" href="./vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="./vendor/tailwind.css">
     <!-- Required Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
-                        signature: ['"Great Vibes"', 'cursive']
-                    },
-                    colors: {
-                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="./vendor/html2pdf/html2pdf.bundle.min.js"></script>
+    <script src="./vendor/chartjs/chart.umd.js"></script>
+    <script src="./vendor/qrcodejs/qrcode.min.js"></script>
+    <script src="./vendor/crypto-js/crypto-js.js"></script>
     <style>
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }

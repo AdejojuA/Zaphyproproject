@@ -7,12 +7,23 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "start": "electron .",
-    "dist": "electron-builder --win portable --x64"
+    "build:css": "tailwindcss -c tailwind.config.js -i ./src/styles/tailwind.input.css -o ./src/vendor/tailwind.css --minify",
+    "start": "npm run build:css && electron .",
+    "smoke:offline": "npm run build:css && electron ./scripts/smoke-offline.cjs",
+    "dist": "npm run build:css && electron-builder --win portable --x64"
   },
   "devDependencies": {
+    "@fontsource/caveat": "^5.2.8",
+    "@fontsource/great-vibes": "^5.2.8",
+    "@fontsource/inter": "^5.2.8",
+    "@fortawesome/fontawesome-free": "^6.4.0",
+    "chart.js": "^4.4.0",
+    "crypto-js": "^4.1.1",
     "electron": "^31.7.7",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.13.3",
+    "html2pdf.js": "^0.10.1",
+    "qrcodejs": "^1.0.0",
+    "tailwindcss": "^3.4.17"
   },
   "build": {
     "appId": "com.zahpy.businesspro",

@@ -184,6 +184,7 @@
                             <select id="docStatus" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
                                 <option value="Draft">Draft</option>
                                 <option value="Sent">Sent</option>
+                                <option value="Partial Paid">Partial Paid</option>
                                 <option value="Paid">Paid</option>
                                 <option value="Overdue">Overdue</option>
                             </select>
@@ -199,6 +200,15 @@
                     </div>
                     <div class="p-5 grid grid-cols-2 gap-5">
                         <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Saved Client</label>
+                            <div class="flex gap-2">
+                                <select id="clientQuickSelect" class="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                                    <option value="">Select saved client...</option>
+                                </select>
+                                <button id="saveCurrentClientBtn" class="px-3 py-2.5 bg-brand-100 text-brand-700 hover:bg-brand-200 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors">Save</button>
+                            </div>
+                        </div>
+                        <div class="col-span-2">
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblYourBiz">Your Business Name</label>
                             <input type="text" id="businessName" value="Zahpy Solutions" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
                         </div>
@@ -209,6 +219,18 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblClientEmail">Client Email</label>
                             <input type="email" id="clientEmail" value="client@nexus.com" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Client Phone</label>
+                            <input type="tel" id="clientPhone" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Client Tax ID</label>
+                            <input type="text" id="clientTaxId" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Client Address</label>
+                            <textarea id="clientAddress" rows="2" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5"></textarea>
                         </div>
                     </div>
                 </div>
@@ -229,6 +251,12 @@
                         </div>
                     </div>
                     <div class="p-5">
+                        <div class="flex gap-2 mb-4">
+                            <select id="serviceCatalogSelect" class="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                                <option value="">Add saved service...</option>
+                            </select>
+                            <button id="addCatalogItemBtn" class="px-3 py-2.5 bg-brand-600 text-white hover:bg-brand-700 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors">Add</button>
+                        </div>
                         <!-- Header row -->
                         <div class="grid grid-cols-12 gap-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">
                             <div class="col-span-6 ui-str" data-key="thDesc">Description</div>
@@ -423,6 +451,37 @@
                 </div>
             </div>
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 min-h-[400px]">
+                <div class="mb-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-credit-card text-brand-500"></i>
+                        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">Payment Tracking</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Invoice</label>
+                            <select id="paymentInvoiceSelect" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm text-slate-800 dark:text-white"></select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Amount</label>
+                            <input type="number" id="paymentAmountInput" min="0" step="0.01" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Date</label>
+                            <input type="date" id="paymentDateInput" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Method</label>
+                            <input type="text" id="paymentMethodInput" placeholder="Card, cash..." class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm text-slate-800 dark:text-white">
+                        </div>
+                        <div class="flex items-end">
+                            <button id="addPaymentBtn" class="w-full bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors">Record</button>
+                        </div>
+                        <div class="md:col-span-6">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Note</label>
+                            <input type="text" id="paymentNoteInput" placeholder="Optional payment note" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm text-slate-800 dark:text-white">
+                        </div>
+                    </div>
+                </div>
                 <div id="historyListDiv" class="space-y-3">
                     <!-- History injected via JS -->
                 </div>
@@ -432,20 +491,134 @@
         <!-- ================= DASHBOARD & SETTINGS VIEWS ================= -->
         <div id="dashboardView" class="view-section hidden max-w-5xl mx-auto space-y-6">
             <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-4 ui-str" data-key="tabDash">Dashboard</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Total (30d)</p><h3 id="total30dSpan" class="text-2xl font-black text-slate-800 dark:text-white">$0</h3></div>
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Paid Docs</p><h3 id="paidCountSpan" class="text-2xl font-black text-emerald-500">0</h3></div>
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Total Docs</p><h3 id="docCountSpan" class="text-2xl font-black text-brand-500">0</h3></div>
                 <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Overdue</p><h3 id="overdueCountSpan" class="text-2xl font-black text-rose-500">0</h3></div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Paid</p><h3 id="paidAmountSpan" class="text-2xl font-black text-emerald-500">$0</h3></div>
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 text-center"><p class="text-xs text-slate-500 font-bold uppercase mb-1">Outstanding</p><h3 id="outstandingSpan" class="text-2xl font-black text-amber-500">$0</h3></div>
             </div>
             <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 h-80">
                 <canvas id="weeklyChartCanvas"></canvas>
             </div>
         </div>
 
-        <div id="settingsView" class="view-section hidden max-w-3xl mx-auto space-y-6">
+        <div id="settingsView" class="view-section hidden max-w-6xl mx-auto space-y-6">
             <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-4 ui-str" data-key="tabSettings">Settings & Tools</h2>
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-6">
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white"><i class="fas fa-briefcase text-brand-500 mr-2"></i> Tax & Business Defaults</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Business Name</label>
+                            <input type="text" id="settingsBusinessName" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Business Email</label>
+                            <input type="email" id="settingsBusinessEmail" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Business Phone</label>
+                            <input type="tel" id="settingsBusinessPhone" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Business Address</label>
+                            <textarea id="settingsBusinessAddress" rows="2" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Currency</label>
+                            <select id="settingsDocCurrency" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                                <option value="$">USD ($)</option>
+                                <option value="€">EUR (€)</option>
+                                <option value="£">GBP (£)</option>
+                                <option value="₹">INR (₹)</option>
+                                <option value="¥">JPY (¥)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Unit Label</label>
+                            <select id="settingsUnitLabel" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                                <option value="Qty">Quantity</option>
+                                <option value="Hours">Hours</option>
+                                <option value="Days">Days</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Default Tax (%)</label>
+                            <input type="number" id="settingsTaxRate" step="0.01" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Due Days</label>
+                            <input type="number" id="settingsDueDays" min="0" step="1" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Late Fee (%)</label>
+                            <input type="number" id="settingsLateFee" step="0.01" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">PayPal Username</label>
+                            <input type="text" id="settingsPaypalUser" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Stripe Link</label>
+                            <input type="text" id="settingsStripeLink" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">
+                        </div>
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Default Notes</label>
+                            <textarea id="settingsNotes" rows="2" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-5">
+                        <button id="applyBusinessDefaultsBtn" class="px-4 py-2 bg-brand-100 text-brand-700 hover:bg-brand-200 rounded-lg text-sm font-bold transition-colors">Apply to Current Invoice</button>
+                        <button id="saveBusinessSettingsBtn" class="px-4 py-2 bg-brand-600 text-white hover:bg-brand-700 rounded-lg text-sm font-bold transition-colors">Save Defaults</button>
+                    </div>
+                </div>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-6">
+
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white"><i class="fas fa-address-book text-brand-500 mr-2"></i> Client Manager</h3>
+                    <input type="hidden" id="managerClientId">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="text" id="managerClientName" placeholder="Client name" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                        <input type="email" id="managerClientEmail" placeholder="Email" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                        <input type="tel" id="managerClientPhone" placeholder="Phone" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                        <input type="text" id="managerClientTaxId" placeholder="Tax ID" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                        <textarea id="managerClientAddress" rows="2" placeholder="Address" class="md:col-span-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5"></textarea>
+                        <textarea id="managerClientNotes" rows="2" placeholder="Private notes" class="md:col-span-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5"></textarea>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-4">
+                        <button id="clearClientFormBtn" class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">Clear</button>
+                        <button id="saveClientBtn" class="px-4 py-2 bg-brand-600 text-white hover:bg-brand-700 rounded-lg text-sm font-bold transition-colors">Save Client</button>
+                    </div>
+                    <div id="clientManagerList" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5"></div>
+                </div>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-6">
+
+                <div>
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white"><i class="fas fa-box-open text-brand-500 mr-2"></i> Product & Service Catalog</h3>
+                    <input type="hidden" id="managerServiceId">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <input type="text" id="managerServiceName" placeholder="Service or product name" class="md:col-span-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                        <input type="number" id="managerServicePrice" placeholder="Price" step="0.01" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                        <select id="managerServiceUnit" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                            <option value="Qty">Quantity</option>
+                            <option value="Hours">Hours</option>
+                            <option value="Days">Days</option>
+                        </select>
+                        <input type="text" id="managerServiceSku" placeholder="SKU / Code" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5">
+                        <textarea id="managerServiceDescription" rows="2" placeholder="Description shown on invoices" class="md:col-span-5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg p-2.5"></textarea>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-4">
+                        <button id="clearServiceFormBtn" class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">Clear</button>
+                        <button id="saveServiceBtn" class="px-4 py-2 bg-brand-600 text-white hover:bg-brand-700 rounded-lg text-sm font-bold transition-colors">Save Service</button>
+                    </div>
+                    <div id="serviceCatalogList" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5"></div>
+                </div>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-6">
                 
                 <div>
                     <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white"><i class="fas fa-paint-roller text-brand-500 mr-2"></i> Design & Typography</h3>
@@ -662,9 +835,14 @@
         };
 
         // --- State ---
+        const WORKSPACE_KEY = 'zahpy_workspace_v3';
+        const LEGACY_HISTORY_KEY = 'zahpy_pro_v2';
         let currentLang = 'en';
         let items = [{ name: "Brand Identity Kit", qty: 1, price: 480 }, { name: "Social Media Pack", qty: 2, price: 95 }];
         let historyInvoices = [];
+        let clients = [];
+        let serviceCatalog = [];
+        let businessSettings = getDefaultBusinessSettings();
         let chartInstance = null;
         let confirmCallback = null;
         let savedLogo = null;
@@ -675,6 +853,39 @@
         // --- Core UI Functions ---
         function getT() { return i18n[currentLang] || i18n['en']; }
         function eHTML(str) { return (str||'').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+        function eAttr(str) { return eHTML(str).replace(/"/g, '&quot;'); }
+        function getEl(id) { return document.getElementById(id); }
+        function setValue(id, value) { const el = getEl(id); if (el) el.value = value ?? ''; }
+        function getNumeric(value) { return parseFloat(value) || 0; }
+        function todayISO() { return new Date().toISOString().split('T')[0]; }
+        function addDaysISO(days) { return new Date(Date.now() + (parseInt(days, 10) || 0) * 86400000).toISOString().split('T')[0]; }
+        function getDefaultBusinessSettings() {
+            return {
+                businessName: 'Zahpy Solutions',
+                businessEmail: '',
+                businessPhone: '',
+                businessAddress: '',
+                docCurrency: '$',
+                unitLabel: 'Qty',
+                taxRate: '8',
+                dueDays: '14',
+                lateFee: '10',
+                paypalUser: '',
+                stripeLink: '',
+                notes: 'Thank you for your business. Payment is due within 14 days of receipt.'
+            };
+        }
+        function getInvoicePaidTotal(invoice) {
+            return (invoice.payments || []).reduce((sum, payment) => sum + getNumeric(payment.amount), 0);
+        }
+        function normalizeInvoiceRecord(invoice) {
+            const normalized = { ...invoice, payments: Array.isArray(invoice.payments) ? invoice.payments : [] };
+            normalized.paidAmount = getInvoicePaidTotal(normalized);
+            normalized.balanceDue = Math.max((getNumeric(normalized.finalTotal) - normalized.paidAmount), 0);
+            if (normalized.paidAmount > 0 && normalized.balanceDue <= 0.005) normalized.docStatus = 'Paid';
+            else if (normalized.paidAmount > 0) normalized.docStatus = 'Partial Paid';
+            return normalized;
+        }
         
         // GLASSMORPHISM TOAST
         function showToast(msg, type='success') {
@@ -762,7 +973,7 @@
                     if (!pin || pin.length < 4) { showToast('PIN must be at least 4 characters.', 'error'); return; }
                     localStorage.setItem('zahpy_pin_hash', getHashed(pin));
                     sessionPin = pin;
-                    saveToHistory();
+                    persistWorkspaceData();
                     updateSecurityUI();
                     showToast('App Locked Successfully.');
                 });
@@ -771,7 +982,7 @@
                     if (getHashed(pin) === storedHash) {
                         localStorage.removeItem('zahpy_pin_hash');
                         sessionPin = null;
-                        saveToHistory();
+                        persistWorkspaceData();
                         updateSecurityUI();
                         showToast('Security Lock Disabled.');
                     } else {
@@ -834,25 +1045,417 @@
             }
         }
 
-        function loadDataFromStorage() {
-            const savedStr = localStorage.getItem('zahpy_pro_v2');
-            if (savedStr) {
-                let parsed = null;
-                if (sessionPin) {
-                    const decrypted = decryptData(savedStr, sessionPin);
-                    if (decrypted) parsed = JSON.parse(decrypted);
-                } else {
-                    try { parsed = JSON.parse(savedStr); } catch(e) {}
-                }
-                
-                if (parsed) {
-                    historyInvoices = parsed;
-                    renderHistoryList();
-                    updateDashboard();
-                }
+        function parseStoredData(savedStr) {
+            if (!savedStr) return null;
+            if (sessionPin) {
+                const decrypted = decryptData(savedStr, sessionPin);
+                if (!decrypted) return null;
+                return JSON.parse(decrypted);
             }
+            return JSON.parse(savedStr);
+        }
+
+        function getWorkspacePayload() {
+            return {
+                version: 3,
+                historyInvoices: historyInvoices.map(normalizeInvoiceRecord),
+                clients,
+                serviceCatalog,
+                businessSettings
+            };
+        }
+
+        function persistWorkspaceData() {
+            const payload = JSON.stringify(getWorkspacePayload());
+            localStorage.setItem(WORKSPACE_KEY, sessionPin ? encryptData(payload, sessionPin) : payload);
+        }
+
+        function hydrateWorkspace(parsed) {
+            if (Array.isArray(parsed)) {
+                historyInvoices = parsed.map(normalizeInvoiceRecord);
+                clients = [];
+                serviceCatalog = [];
+                businessSettings = getDefaultBusinessSettings();
+                return;
+            }
+
+            historyInvoices = Array.isArray(parsed?.historyInvoices) ? parsed.historyInvoices.map(normalizeInvoiceRecord) : [];
+            clients = Array.isArray(parsed?.clients) ? parsed.clients : [];
+            serviceCatalog = Array.isArray(parsed?.serviceCatalog) ? parsed.serviceCatalog : [];
+            businessSettings = { ...getDefaultBusinessSettings(), ...(parsed?.businessSettings || {}) };
+        }
+
+        function loadDataFromStorage() {
+            let parsed = null;
+            const workspaceStr = localStorage.getItem(WORKSPACE_KEY);
+            const legacyStr = localStorage.getItem(LEGACY_HISTORY_KEY);
+
+            try {
+                parsed = parseStoredData(workspaceStr || legacyStr);
+            } catch(e) {
+                parsed = null;
+            }
+
+            if (parsed) hydrateWorkspace(parsed);
+
+            loadBusinessSettingsForm();
+            applyBusinessSettingsToForm(false);
+            renderClientOptions();
+            renderClientManagerList();
+            renderServiceCatalogOptions();
+            renderServiceCatalogList();
+            renderItems();
+            renderHistoryList();
+            updateDashboard();
+
+            if (!workspaceStr && parsed) persistWorkspaceData();
+            updatePreview();
+        }
+
+        function getClientFormData(prefix) {
+            return {
+                id: getEl(`${prefix}ClientId`)?.value || `client_${Date.now()}`,
+                name: getEl(`${prefix}ClientName`)?.value.trim() || '',
+                email: getEl(`${prefix}ClientEmail`)?.value.trim() || '',
+                phone: getEl(`${prefix}ClientPhone`)?.value.trim() || '',
+                taxId: getEl(`${prefix}ClientTaxId`)?.value.trim() || '',
+                address: getEl(`${prefix}ClientAddress`)?.value.trim() || '',
+                notes: getEl(`${prefix}ClientNotes`)?.value.trim() || ''
+            };
+        }
+
+        function applyClientToInvoice(client) {
+            if (!client) return;
+            setValue('clientName', client.name);
+            setValue('clientEmail', client.email);
+            setValue('clientPhone', client.phone);
+            setValue('clientTaxId', client.taxId);
+            setValue('clientAddress', client.address);
+            updatePreview();
+        }
+
+        function renderClientOptions() {
+            const select = getEl('clientQuickSelect');
+            if (!select) return;
+            const current = select.value;
+            select.innerHTML = '<option value="">Select saved client...</option>' + clients
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(client => `<option value="${client.id}">${eHTML(client.name)}${client.email ? ' — ' + eHTML(client.email) : ''}</option>`)
+                .join('');
+            if (clients.some(client => client.id === current)) select.value = current;
+        }
+
+        function clearClientManagerForm() {
+            ['managerClientId','managerClientName','managerClientEmail','managerClientPhone','managerClientTaxId','managerClientAddress','managerClientNotes'].forEach(id => setValue(id, ''));
+        }
+
+        function saveClient(client, silent=false) {
+            if (!client.name) {
+                if (!silent) showToast('Client name is required.', 'error');
+                return false;
+            }
+            const existingIndex = clients.findIndex(c => c.id === client.id);
+            if (existingIndex >= 0) clients[existingIndex] = client;
+            else clients.push(client);
+            persistWorkspaceData();
+            renderClientOptions();
+            renderClientManagerList();
+            if (!silent) showToast('Client Saved');
+            return true;
+        }
+
+        function saveCurrentClient() {
+            const existing = clients.find(c => c.name.toLowerCase() === getEl('clientName').value.trim().toLowerCase() && c.email === getEl('clientEmail').value.trim());
+            const client = {
+                id: existing?.id || `client_${Date.now()}`,
+                name: getEl('clientName').value.trim(),
+                email: getEl('clientEmail').value.trim(),
+                phone: getEl('clientPhone').value.trim(),
+                taxId: getEl('clientTaxId').value.trim(),
+                address: getEl('clientAddress').value.trim(),
+                notes: existing?.notes || ''
+            };
+            saveClient(client);
+        }
+
+        function renderClientManagerList() {
+            const list = getEl('clientManagerList');
+            if (!list) return;
+            if (!clients.length) {
+                list.innerHTML = '<p class="text-sm text-slate-500 italic md:col-span-2">No saved clients yet.</p>';
+                return;
+            }
+            list.innerHTML = clients.map(client => `
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    <div class="flex justify-between gap-3">
+                        <div>
+                            <p class="font-bold text-sm text-slate-800 dark:text-white">${eHTML(client.name)}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${eHTML(client.email || 'No email')} ${client.phone ? '&middot; ' + eHTML(client.phone) : ''}</p>
+                            ${client.address ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${eHTML(client.address)}</p>` : ''}
+                        </div>
+                        <div class="flex gap-2 h-fit">
+                            <button class="use-client px-2 py-1 bg-brand-100 text-brand-700 rounded text-xs font-bold" data-id="${client.id}">Use</button>
+                            <button class="edit-client px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-bold" data-id="${client.id}">Edit</button>
+                            <button class="delete-client px-2 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold" data-id="${client.id}">Del</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.querySelectorAll('.use-client').forEach(btn => btn.addEventListener('click', () => {
+                applyClientToInvoice(clients.find(client => client.id === btn.dataset.id));
+                document.querySelector('[data-target="createView"]').click();
+                showToast('Client Applied');
+            }));
+            document.querySelectorAll('.edit-client').forEach(btn => btn.addEventListener('click', () => {
+                const client = clients.find(c => c.id === btn.dataset.id);
+                if (!client) return;
+                setValue('managerClientId', client.id);
+                setValue('managerClientName', client.name);
+                setValue('managerClientEmail', client.email);
+                setValue('managerClientPhone', client.phone);
+                setValue('managerClientTaxId', client.taxId);
+                setValue('managerClientAddress', client.address);
+                setValue('managerClientNotes', client.notes);
+            }));
+            document.querySelectorAll('.delete-client').forEach(btn => btn.addEventListener('click', () => {
+                openConfirm('Delete Client?', 'This will remove the saved client profile. Existing invoices stay unchanged.', 'Delete', 'bg-rose-600 hover:bg-rose-700', 'fa-trash', false, () => {
+                    clients = clients.filter(client => client.id !== btn.dataset.id);
+                    persistWorkspaceData();
+                    renderClientOptions();
+                    renderClientManagerList();
+                    showToast('Client Deleted');
+                });
+            }));
+        }
+
+        function getServiceFormData() {
+            return {
+                id: getEl('managerServiceId').value || `service_${Date.now()}`,
+                name: getEl('managerServiceName').value.trim(),
+                description: getEl('managerServiceDescription').value.trim(),
+                price: getNumeric(getEl('managerServicePrice').value),
+                unit: getEl('managerServiceUnit').value || 'Qty',
+                sku: getEl('managerServiceSku').value.trim()
+            };
+        }
+
+        function clearServiceForm() {
+            ['managerServiceId','managerServiceName','managerServiceDescription','managerServicePrice','managerServiceSku'].forEach(id => setValue(id, ''));
+            setValue('managerServiceUnit', 'Qty');
+        }
+
+        function saveService(service) {
+            if (!service.name) { showToast('Service name is required.', 'error'); return false; }
+            const existingIndex = serviceCatalog.findIndex(s => s.id === service.id);
+            if (existingIndex >= 0) serviceCatalog[existingIndex] = service;
+            else serviceCatalog.push(service);
+            persistWorkspaceData();
+            renderServiceCatalogOptions();
+            renderServiceCatalogList();
+            showToast('Service Saved');
+            return true;
+        }
+
+        function renderServiceCatalogOptions() {
+            const select = getEl('serviceCatalogSelect');
+            if (!select) return;
+            const current = select.value;
+            select.innerHTML = '<option value="">Add saved service...</option>' + serviceCatalog
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(service => `<option value="${service.id}">${eHTML(service.name)} — ${businessSettings.docCurrency}${getNumeric(service.price).toFixed(2)}</option>`)
+                .join('');
+            if (serviceCatalog.some(service => service.id === current)) select.value = current;
+        }
+
+        function renderServiceCatalogList() {
+            const list = getEl('serviceCatalogList');
+            if (!list) return;
+            if (!serviceCatalog.length) {
+                list.innerHTML = '<p class="text-sm text-slate-500 italic md:col-span-2">No saved products or services yet.</p>';
+                return;
+            }
+            list.innerHTML = serviceCatalog.map(service => `
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    <div class="flex justify-between gap-3">
+                        <div>
+                            <p class="font-bold text-sm text-slate-800 dark:text-white">${eHTML(service.name)}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${eHTML(service.unit)} &middot; ${businessSettings.docCurrency}${getNumeric(service.price).toFixed(2)} ${service.sku ? '&middot; ' + eHTML(service.sku) : ''}</p>
+                            ${service.description ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${eHTML(service.description)}</p>` : ''}
+                        </div>
+                        <div class="flex gap-2 h-fit">
+                            <button class="use-service px-2 py-1 bg-brand-100 text-brand-700 rounded text-xs font-bold" data-id="${service.id}">Add</button>
+                            <button class="edit-service px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-bold" data-id="${service.id}">Edit</button>
+                            <button class="delete-service px-2 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold" data-id="${service.id}">Del</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.querySelectorAll('.use-service').forEach(btn => btn.addEventListener('click', () => addServiceToInvoice(btn.dataset.id)));
+            document.querySelectorAll('.edit-service').forEach(btn => btn.addEventListener('click', () => {
+                const service = serviceCatalog.find(s => s.id === btn.dataset.id);
+                if (!service) return;
+                setValue('managerServiceId', service.id);
+                setValue('managerServiceName', service.name);
+                setValue('managerServiceDescription', service.description);
+                setValue('managerServicePrice', service.price);
+                setValue('managerServiceUnit', service.unit);
+                setValue('managerServiceSku', service.sku);
+            }));
+            document.querySelectorAll('.delete-service').forEach(btn => btn.addEventListener('click', () => {
+                openConfirm('Delete Service?', 'This removes the saved catalog item. Existing invoices stay unchanged.', 'Delete', 'bg-rose-600 hover:bg-rose-700', 'fa-trash', false, () => {
+                    serviceCatalog = serviceCatalog.filter(service => service.id !== btn.dataset.id);
+                    persistWorkspaceData();
+                    renderServiceCatalogOptions();
+                    renderServiceCatalogList();
+                    showToast('Service Deleted');
+                });
+            }));
+        }
+
+        function addServiceToInvoice(serviceId) {
+            const service = serviceCatalog.find(s => s.id === serviceId);
+            if (!service) { showToast('Select a saved service first.', 'error'); return; }
+            if (service.unit) setValue('unitLabel', service.unit);
+            items.push({ name: service.description || service.name, qty: 1, price: getNumeric(service.price) });
             renderItems();
             updatePreview();
+            showToast('Service Added');
+        }
+
+        function loadBusinessSettingsForm() {
+            setValue('settingsBusinessName', businessSettings.businessName);
+            setValue('settingsBusinessEmail', businessSettings.businessEmail);
+            setValue('settingsBusinessPhone', businessSettings.businessPhone);
+            setValue('settingsBusinessAddress', businessSettings.businessAddress);
+            setValue('settingsDocCurrency', businessSettings.docCurrency);
+            setValue('settingsUnitLabel', businessSettings.unitLabel);
+            setValue('settingsTaxRate', businessSettings.taxRate);
+            setValue('settingsDueDays', businessSettings.dueDays);
+            setValue('settingsLateFee', businessSettings.lateFee);
+            setValue('settingsPaypalUser', businessSettings.paypalUser);
+            setValue('settingsStripeLink', businessSettings.stripeLink);
+            setValue('settingsNotes', businessSettings.notes);
+        }
+
+        function readBusinessSettingsForm() {
+            businessSettings = {
+                businessName: getEl('settingsBusinessName').value.trim(),
+                businessEmail: getEl('settingsBusinessEmail').value.trim(),
+                businessPhone: getEl('settingsBusinessPhone').value.trim(),
+                businessAddress: getEl('settingsBusinessAddress').value.trim(),
+                docCurrency: getEl('settingsDocCurrency').value,
+                unitLabel: getEl('settingsUnitLabel').value,
+                taxRate: getEl('settingsTaxRate').value,
+                dueDays: getEl('settingsDueDays').value,
+                lateFee: getEl('settingsLateFee').value,
+                paypalUser: getEl('settingsPaypalUser').value.trim(),
+                stripeLink: getEl('settingsStripeLink').value.trim(),
+                notes: getEl('settingsNotes').value
+            };
+        }
+
+        function applyBusinessSettingsToForm(showMessage=true) {
+            setValue('businessName', businessSettings.businessName);
+            setValue('docCurrency', businessSettings.docCurrency);
+            setValue('unitLabel', businessSettings.unitLabel);
+            setValue('taxRate', businessSettings.taxRate);
+            setValue('lateFee', businessSettings.lateFee);
+            setValue('paypalUser', businessSettings.paypalUser);
+            setValue('stripeLink', businessSettings.stripeLink);
+            setValue('notes', businessSettings.notes);
+            setValue('dueDate', addDaysISO(businessSettings.dueDays));
+            renderServiceCatalogOptions();
+            renderItems();
+            updatePreview();
+            if (showMessage) showToast('Business Defaults Applied');
+        }
+
+        function saveBusinessSettings() {
+            readBusinessSettingsForm();
+            persistWorkspaceData();
+            renderServiceCatalogOptions();
+            renderServiceCatalogList();
+            showToast('Business Defaults Saved');
+        }
+
+        function selectInvoiceForPayment(invoiceId) {
+            setValue('paymentInvoiceSelect', invoiceId);
+            const invoice = historyInvoices.find(h => String(h.id) === String(invoiceId));
+            if (invoice) setValue('paymentAmountInput', Math.max(invoice.balanceDue || invoice.finalTotal || 0, 0).toFixed(2));
+            setValue('paymentDateInput', todayISO());
+        }
+
+        function renderPaymentInvoiceSelect() {
+            const select = getEl('paymentInvoiceSelect');
+            if (!select) return;
+            const current = select.value;
+            select.innerHTML = '<option value="">Select invoice...</option>' + historyInvoices.map(invoice => `
+                <option value="${invoice.id}">#${eHTML(invoice.docNumber)} — ${eHTML(invoice.clientName)} — Balance ${invoice.docCurrency}${getNumeric(invoice.balanceDue).toFixed(2)}</option>
+            `).join('');
+            if (historyInvoices.some(invoice => String(invoice.id) === current)) select.value = current;
+        }
+
+        function recordPayment() {
+            const invoiceId = getEl('paymentInvoiceSelect').value;
+            const invoice = historyInvoices.find(h => String(h.id) === String(invoiceId));
+            if (!invoice) { showToast('Select an invoice first.', 'error'); return; }
+            const amount = getNumeric(getEl('paymentAmountInput').value);
+            if (amount <= 0) { showToast('Payment amount must be greater than zero.', 'error'); return; }
+            invoice.payments = invoice.payments || [];
+            invoice.payments.push({
+                id: `payment_${Date.now()}`,
+                amount,
+                date: getEl('paymentDateInput').value || todayISO(),
+                method: getEl('paymentMethodInput').value.trim() || 'Manual',
+                note: getEl('paymentNoteInput').value.trim()
+            });
+            Object.assign(invoice, normalizeInvoiceRecord(invoice));
+            persistWorkspaceData();
+            setValue('paymentAmountInput', '');
+            setValue('paymentNoteInput', '');
+            renderHistoryList();
+            updateDashboard();
+            updatePreview();
+            showToast('Payment Recorded');
+        }
+
+        function backupWorkspace() {
+            const blob = new Blob([JSON.stringify(getWorkspacePayload(), null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `zahpy-backup-${todayISO()}.zahpybackup`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('Backup Downloaded');
+        }
+
+        function restoreWorkspaceFromFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = event => {
+                try {
+                    const parsed = JSON.parse(event.target.result);
+                    hydrateWorkspace(parsed);
+                    persistWorkspaceData();
+                    loadBusinessSettingsForm();
+                    applyBusinessSettingsToForm(false);
+                    renderClientOptions();
+                    renderClientManagerList();
+                    renderServiceCatalogOptions();
+                    renderServiceCatalogList();
+                    renderItems();
+                    renderHistoryList();
+                    updateDashboard();
+                    updatePreview();
+                    showToast('Workspace Restored');
+                } catch(e) {
+                    showToast('Backup file could not be restored.', 'error');
+                }
+            };
+            reader.readAsText(file);
         }
 
         // --- Invoice Logic ---
@@ -865,7 +1468,7 @@
                 row.className = 'grid grid-cols-12 gap-3 items-center';
                 row.innerHTML = `
                     <div class="col-span-6">
-                        <input type="text" class="item-name w-full text-sm rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white px-3 py-2 transition-colors" value="${eHTML(it.name)}" placeholder="Item name">
+                        <input type="text" class="item-name w-full text-sm rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white px-3 py-2 transition-colors" value="${eAttr(it.name)}" placeholder="Item name">
                     </div>
                     <div class="col-span-2">
                         <input type="number" class="item-qty w-full text-sm rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-white px-3 py-2 transition-colors" value="${it.qty}" step="0.5">
@@ -900,6 +1503,11 @@
             let total = sub + taxAmt - disc;
             let due = new Date(v('dueDate'));
             let lateAmt = (due < new Date() && lateR > 0) ? total * (lateR/100) : 0;
+            let finalTotal = total + lateAmt;
+            let existingInvoice = historyInvoices.find(h => h.docNumber === v('docNumber'));
+            let payments = existingInvoice?.payments || [];
+            let paidAmount = payments.reduce((sum, payment) => sum + getNumeric(payment.amount), 0);
+            let balanceDue = Math.max(finalTotal - paidAmount, 0);
             
             return {
                 uiLang: v('uiLang'), 
@@ -909,8 +1517,14 @@
                 docDate: v('docDate'), 
                 docStatus: v('docStatus'), 
                 businessName: v('businessName'),
+                businessEmail: businessSettings.businessEmail,
+                businessPhone: businessSettings.businessPhone,
+                businessAddress: businessSettings.businessAddress,
                 clientName: v('clientName'), 
                 clientEmail: v('clientEmail'), 
+                clientPhone: v('clientPhone'),
+                clientTaxId: v('clientTaxId'),
+                clientAddress: v('clientAddress'),
                 unitLabel: v('unitLabel'),
                 taxRate: v('taxRate'), 
                 discountAmount: v('discountAmount'), 
@@ -924,7 +1538,10 @@
                 subtotal: sub, 
                 taxAmt: taxAmt, 
                 lateAmt: lateAmt, 
-                finalTotal: total + lateAmt
+                finalTotal,
+                payments,
+                paidAmount,
+                balanceDue
             };
         }
 
@@ -932,7 +1549,7 @@
             const data = getFormData();
             const t = getT();
             
-            const stColor = { 'Draft':'bg-slate-100 text-slate-600', 'Sent':'bg-blue-100 text-blue-700', 'Paid':'bg-emerald-100 text-emerald-700', 'Overdue':'bg-rose-100 text-rose-700' }[data.docStatus] || 'bg-slate-100 text-slate-600';
+            const stColor = { 'Draft':'bg-slate-100 text-slate-600', 'Sent':'bg-blue-100 text-blue-700', 'Partial Paid':'bg-amber-100 text-amber-700', 'Paid':'bg-emerald-100 text-emerald-700', 'Overdue':'bg-rose-100 text-rose-700' }[data.docStatus] || 'bg-slate-100 text-slate-600';
 
             let itemsHtml = items.map(i => `
                 <div class="grid grid-cols-12 gap-4 py-3 border-b border-slate-100 last:border-0 items-center">
@@ -975,15 +1592,26 @@
 
             // Smart Badge Logic
             let statusHtml = '';
-            if (['Paid', 'Overdue'].includes(data.docStatus)) {
+            if (['Partial Paid', 'Paid', 'Overdue'].includes(data.docStatus)) {
                 statusHtml = `<div class="mt-2"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${stColor}">${data.docStatus}</span></div>`;
             }
+            const businessContactHtml = [data.businessEmail, data.businessPhone, data.businessAddress]
+                .filter(Boolean)
+                .map(value => `<p class="text-[11px] text-slate-500 mt-0.5">${eHTML(value)}</p>`)
+                .join('');
+            const clientDetailsHtml = [
+                data.clientEmail,
+                data.clientPhone,
+                data.clientTaxId ? `Tax ID: ${data.clientTaxId}` : '',
+                data.clientAddress
+            ].filter(Boolean).map(value => `<p class="text-xs text-slate-500 mt-0.5">${eHTML(value)}</p>`).join('');
 
             let html = `
                 <div class="flex justify-between items-start mb-12">
                     <div>
                         ${logoHtml}
                         <h1 class="text-3xl font-black text-slate-900 tracking-tight">${eHTML(data.businessName)}</h1>
+                        ${businessContactHtml}
                     </div>
                     <div class="text-right">
                         <div class="inline-block bg-slate-900 text-white px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase mb-3 shadow-sm">${t[data.docType==='INVOICE'?'invoice':'estimate']}</div>
@@ -995,7 +1623,7 @@
                 <div class="mb-10">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">${t.billTo}</p>
                     <p class="text-sm font-bold text-slate-800">${eHTML(data.clientName)}</p>
-                    <p class="text-xs text-slate-500 mt-0.5">${eHTML(data.clientEmail)}</p>
+                    ${clientDetailsHtml}
                 </div>
 
                 <div class="mb-8 flex-1">
@@ -1031,6 +1659,15 @@
                             <span class="font-black text-slate-800 uppercase tracking-wider">${t.total}</span>
                             <span class="text-xl font-black tracking-tight text-slate-900 font-mono">${data.docCurrency}${data.finalTotal.toFixed(2)}</span>
                         </div>
+                        ${data.paidAmount > 0 ? `
+                        <div class="flex justify-between py-1.5 text-emerald-600">
+                            <span>Paid</span>
+                            <span class="font-medium font-mono">${data.docCurrency}${data.paidAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between py-1.5 text-amber-600">
+                            <span>Balance</span>
+                            <span class="font-bold font-mono">${data.docCurrency}${data.balanceDue.toFixed(2)}</span>
+                        </div>` : ''}
                     </div>
                 </div>
 
@@ -1069,15 +1706,13 @@
         // --- History, Dashboard & PDF Logic ---
         function saveToHistory() {
             const d = getFormData();
+            const existingInvoice = historyInvoices.find(h => h.docNumber === d.docNumber);
+            const record = normalizeInvoiceRecord({ id: existingInvoice?.id || Date.now(), items: JSON.parse(JSON.stringify(items)), ...d, payments: existingInvoice?.payments || d.payments || [] });
             
             // Replaces the old shorthand saving to save using identical exact keys
             historyInvoices = historyInvoices.filter(h => h.docNumber !== d.docNumber);
-            historyInvoices.unshift({ id: Date.now(), items: JSON.parse(JSON.stringify(items)), ...d });
-            
-            const dataToSave = JSON.stringify(historyInvoices);
-            const finalSaveString = sessionPin ? encryptData(dataToSave, sessionPin) : dataToSave;
-            
-            localStorage.setItem('zahpy_pro_v2', finalSaveString);
+            historyInvoices.unshift(record);
+            persistWorkspaceData();
             showToast('Saved to History');
             renderHistoryList();
             updateDashboard();
@@ -1085,17 +1720,20 @@
 
         function renderHistoryList() {
             const cont = document.getElementById('historyListDiv');
+            renderPaymentInvoiceSelect();
             if(!historyInvoices.length) { cont.innerHTML = '<p class="text-sm text-slate-500 italic">No saved documents yet.</p>'; return; }
             cont.innerHTML = historyInvoices.map(h => `
                 <div class="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 uppercase">${h.docType}</span>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-full ${h.docStatus === 'Paid' ? 'bg-emerald-100 text-emerald-700' : h.docStatus === 'Partial Paid' ? 'bg-amber-100 text-amber-700' : h.docStatus === 'Overdue' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'}">${h.docStatus}</span>
                             <span class="text-sm font-bold text-slate-800 dark:text-white">#${h.docNumber}</span>
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">${h.clientName} &middot; ${h.docDate} &middot; ${h.docCurrency}${h.finalTotal.toFixed(2)}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${h.clientName} &middot; ${h.docDate} &middot; Total ${h.docCurrency}${getNumeric(h.finalTotal).toFixed(2)} &middot; Paid ${h.docCurrency}${getNumeric(h.paidAmount).toFixed(2)} &middot; Balance ${h.docCurrency}${getNumeric(h.balanceDue).toFixed(2)}</p>
                     </div>
                     <div class="flex gap-2">
+                        <button class="pay-hist px-3 py-1.5 bg-brand-100 text-brand-700 rounded text-xs font-semibold hover:bg-brand-200 transition-colors" data-id="${h.id}">Payment</button>
                         <button class="load-hist px-3 py-1.5 bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded text-xs font-semibold dark:text-white hover:text-brand-600 dark:hover:bg-slate-500 transition-colors" data-id="${h.id}">Load</button>
                         <button class="del-hist px-3 py-1.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors" data-id="${h.id}">Del</button>
                     </div>
@@ -1109,7 +1747,7 @@
                     items = JSON.parse(JSON.stringify(h.items));
                     
                     // Because we now save exact keys, loading is a 1-to-1 match!
-                    ['uiLang','docCurrency','docType','docNumber','docDate','docStatus','businessName','clientName','clientEmail','unitLabel','taxRate','discountAmount','dueDate','lateFee','paypalUser','stripeLink','sigName','sigDate','notes'].forEach(k => {
+                    ['uiLang','docCurrency','docType','docNumber','docDate','docStatus','businessName','clientName','clientEmail','clientPhone','clientTaxId','clientAddress','unitLabel','taxRate','discountAmount','dueDate','lateFee','paypalUser','stripeLink','sigName','sigDate','notes'].forEach(k => {
                         if(h[k] !== undefined && document.getElementById(k)) document.getElementById(k).value = h[k];
                     });
                     
@@ -1119,13 +1757,16 @@
                     showToast('Document Loaded');
                 }
             }));
+            document.querySelectorAll('.pay-hist').forEach(b => b.addEventListener('click', () => {
+                selectInvoiceForPayment(b.getAttribute('data-id'));
+                getEl('paymentAmountInput').focus();
+            }));
             
             document.querySelectorAll('.del-hist').forEach(b => b.addEventListener('click', e => {
                 const id = parseInt(b.getAttribute('data-id'));
                 openConfirm('Delete Document?', 'This invoice will be permanently removed from your local history.', 'Delete', 'bg-rose-600 hover:bg-rose-700', 'fa-trash', false, () => {
                     historyInvoices = historyInvoices.filter(x => x.id !== id);
-                    const dataToSave = JSON.stringify(historyInvoices);
-                    localStorage.setItem('zahpy_pro_v2', sessionPin ? encryptData(dataToSave, sessionPin) : dataToSave);
+                    persistWorkspaceData();
                     renderHistoryList();
                     updateDashboard();
                     showToast('Document Deleted');
@@ -1134,15 +1775,18 @@
         }
 
         function updateDashboard() {
-            let total30=0, paid=0, over=0;
+            let total30=0, paid=0, over=0, paidAmount=0, outstanding=0;
             const now = new Date();
             const weekData = [0,0,0,0,0,0,0];
             
             historyInvoices.forEach(h => {
+                h = normalizeInvoiceRecord(h);
                 const d = new Date(h.docDate);
                 if ((now-d)/86400000 <= 30 && h.docType==='INVOICE') total30 += h.finalTotal;
                 if (h.docStatus==='Paid') paid++;
                 if (h.docStatus==='Overdue') over++;
+                paidAmount += getNumeric(h.paidAmount);
+                outstanding += getNumeric(h.balanceDue);
                 if (h.docType==='INVOICE') weekData[d.getDay()] += h.finalTotal;
             });
             
@@ -1150,6 +1794,8 @@
             document.getElementById('paidCountSpan').innerText = paid;
             document.getElementById('docCountSpan').innerText = historyInvoices.length;
             document.getElementById('overdueCountSpan').innerText = over;
+            document.getElementById('paidAmountSpan').innerText = `$${paidAmount.toFixed(2)}`;
+            document.getElementById('outstandingSpan').innerText = `$${outstanding.toFixed(2)}`;
             
             const ctx = document.getElementById('weeklyChartCanvas');
             if(chartInstance) chartInstance.destroy();
@@ -1239,6 +1885,7 @@
             document.getElementById('docDate').value = today;
             document.getElementById('dueDate').value = nextW;
             document.getElementById('sigDate').value = today;
+            document.getElementById('paymentDateInput').value = today;
 
             const savedTheme = localStorage.getItem('zahpy_theme') || 'light';
             if(savedTheme === 'dark') { document.body.classList.add('dark'); document.getElementById('metaThemeColor').setAttribute('content','#0b1120'); }
@@ -1284,6 +1931,29 @@
             });
             loadDesignSettings();
 
+            // Workspace managers
+            document.getElementById('saveBusinessSettingsBtn').addEventListener('click', saveBusinessSettings);
+            document.getElementById('applyBusinessDefaultsBtn').addEventListener('click', () => {
+                saveBusinessSettings();
+                applyBusinessSettingsToForm();
+            });
+            document.getElementById('saveClientBtn').addEventListener('click', () => {
+                if (saveClient(getClientFormData('manager'))) clearClientManagerForm();
+            });
+            document.getElementById('clearClientFormBtn').addEventListener('click', clearClientManagerForm);
+            document.getElementById('saveCurrentClientBtn').addEventListener('click', saveCurrentClient);
+            document.getElementById('clientQuickSelect').addEventListener('change', e => applyClientToInvoice(clients.find(client => client.id === e.target.value)));
+            document.getElementById('saveServiceBtn').addEventListener('click', () => {
+                if (saveService(getServiceFormData())) clearServiceForm();
+            });
+            document.getElementById('clearServiceFormBtn').addEventListener('click', clearServiceForm);
+            document.getElementById('addCatalogItemBtn').addEventListener('click', () => addServiceToInvoice(document.getElementById('serviceCatalogSelect').value));
+            document.getElementById('addPaymentBtn').addEventListener('click', recordPayment);
+            document.getElementById('paymentInvoiceSelect').addEventListener('change', e => selectInvoiceForPayment(e.target.value));
+            document.getElementById('backupBtn').addEventListener('click', backupWorkspace);
+            document.getElementById('restoreBtn').addEventListener('click', () => document.getElementById('restoreFileInput').click());
+            document.getElementById('restoreFileInput').addEventListener('change', e => restoreWorkspaceFromFile(e.target.files[0]));
+
             // Email Buttons
             document.getElementById('copyEmailBtn').addEventListener('click', () => {
                 navigator.clipboard.writeText(document.getElementById('emailPreviewBox').value).then(() => showToast('Copied to clipboard!'));
@@ -1299,13 +1969,13 @@
             });
 
             // Live Updates
-            ['uiLang','docCurrency','docType','docNumber','docDate','docStatus','businessName','clientName','clientEmail','unitLabel','taxRate','discountAmount','dueDate','lateFee','paypalUser','stripeLink','sigName','sigDate','notes'].forEach(id => {
+            ['uiLang','docCurrency','docType','docNumber','docDate','docStatus','businessName','clientName','clientEmail','clientPhone','clientTaxId','clientAddress','unitLabel','taxRate','discountAmount','dueDate','lateFee','paypalUser','stripeLink','sigName','sigDate','notes'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) { el.addEventListener('input', updatePreview); el.addEventListener('change', updatePreview); }
             });
 
             document.getElementById('uiLang').addEventListener('change', (e) => { currentLang = e.target.value; applyTranslations(); });
-            document.getElementById('docCurrency').addEventListener('change', () => { renderItems(); updatePreview(); });
+            document.getElementById('docCurrency').addEventListener('change', () => { renderItems(); renderServiceCatalogOptions(); updatePreview(); });
 
             // Actions
             document.getElementById('addItemBtn').addEventListener('click', () => { items.push({name:"", qty:1, price:0}); renderItems(); updatePreview(); });

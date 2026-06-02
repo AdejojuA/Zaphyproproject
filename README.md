@@ -6,6 +6,10 @@ Zahpy Business Pro is a desktop invoicing app packaged with Electron for Windows
 
 - Create invoices and estimates
 - Track saved invoice history locally
+- Manage saved clients and quickly apply them to invoices
+- Maintain a product and service catalog for reusable line items
+- Record invoice payments and view paid, partial, and outstanding balances
+- Save tax, business, currency, payment link, and default due-date settings
 - Export invoices as PDF
 - Generate email message templates
 - Dashboard charting and payment-link helpers
@@ -40,6 +44,12 @@ npm run dist
 ```
 
 The build output is configured to write to the parent workspace `outputs` folder.
+
+Current package files are written to:
+
+```text
+C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs
+```
 
 ## Notes
 

@@ -12,6 +12,7 @@ async function main() {
   await app.whenReady();
 
   const testSession = session.fromPartition('offline-smoke');
+  await testSession.clearStorageData();
   testSession.webRequest.onBeforeRequest((details, callback) => {
     if (/^https?:\/\//i.test(details.url)) {
       remoteRequests.push(details.url);
@@ -78,6 +79,65 @@ async function main() {
     })()
   `);
 
+  const featureSmoke = await window.webContents.executeJavaScript(`
+    (async () => {
+      const set = (id, value) => {
+        const node = document.getElementById(id);
+        node.value = value;
+        node.dispatchEvent(new Event('input', { bubbles: true }));
+        node.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+
+      document.querySelector('[data-target="settingsView"]').click();
+      set('managerClientName', 'Acme Test Co');
+      set('managerClientEmail', 'billing@acme.test');
+      set('managerClientPhone', '555-0101');
+      set('managerClientTaxId', 'TAX-123');
+      set('managerClientAddress', '100 Test Ave');
+      document.getElementById('saveClientBtn').click();
+
+      set('managerServiceName', 'Offline Test Service');
+      set('managerServiceDescription', 'Offline readiness package');
+      set('managerServicePrice', '125');
+      set('managerServiceUnit', 'Hours');
+      document.getElementById('saveServiceBtn').click();
+
+      document.querySelector('[data-target="createView"]').click();
+      const clientValue = Array.from(document.getElementById('clientQuickSelect').options).find(option => option.text.includes('Acme Test Co'))?.value || '';
+      document.getElementById('clientQuickSelect').value = clientValue;
+      document.getElementById('clientQuickSelect').dispatchEvent(new Event('change', { bubbles: true }));
+
+      const serviceValue = Array.from(document.getElementById('serviceCatalogSelect').options).find(option => option.text.includes('Offline Test Service'))?.value || '';
+      document.getElementById('serviceCatalogSelect').value = serviceValue;
+      document.getElementById('addCatalogItemBtn').click();
+
+      set('docNumber', 'INV-SMOKE-1');
+      document.getElementById('saveHistoryBtn').click();
+
+      document.querySelector('[data-target="historyView"]').click();
+      const invoiceValue = document.getElementById('paymentInvoiceSelect').options[1]?.value || '';
+      document.getElementById('paymentInvoiceSelect').value = invoiceValue;
+      document.getElementById('paymentInvoiceSelect').dispatchEvent(new Event('change', { bubbles: true }));
+      set('paymentAmountInput', '50');
+      set('paymentMethodInput', 'Smoke Test');
+      document.getElementById('addPaymentBtn').click();
+
+      const workspace = JSON.parse(localStorage.getItem('zahpy_workspace_v3'));
+      const invoice = workspace.historyInvoices.find(item => item.docNumber === 'INV-SMOKE-1');
+
+      return {
+        clients: workspace.clients.length,
+        services: workspace.serviceCatalog.length,
+        invoices: workspace.historyInvoices.length,
+        invoiceStatus: invoice?.docStatus,
+        payments: invoice?.payments?.length || 0,
+        paidAmount: invoice?.paidAmount || 0,
+        clientApplied: document.getElementById('clientName').value,
+        serviceAdded: Array.from(document.querySelectorAll('.item-name')).some(input => input.value.includes('Offline readiness package'))
+      };
+    })()
+  `);
+
   const failedLibs = Object.entries(result.libs)
     .filter(([, value]) => value !== 'function' && value !== 'object')
     .map(([key]) => key);
@@ -89,13 +149,19 @@ async function main() {
     ...(!result.fontAwesomeBrandsReady ? ['Font Awesome brands did not load'] : []),
     ...(!result.interReady ? ['Inter font did not load'] : []),
     ...(!result.greatVibesReady ? ['Great Vibes font did not load'] : []),
+    ...(featureSmoke.clients < 1 ? ['client manager smoke failed'] : []),
+    ...(featureSmoke.services < 1 ? ['service catalog smoke failed'] : []),
+    ...(featureSmoke.invoices < 1 ? ['invoice save smoke failed'] : []),
+    ...(featureSmoke.payments < 1 ? ['payment tracking smoke failed'] : []),
+    ...(featureSmoke.invoiceStatus !== 'Partial Paid' ? ['payment status smoke failed'] : []),
+    ...(!featureSmoke.serviceAdded ? ['service insertion smoke failed'] : []),
     ...failedLibs.map((name) => `${name} library did not load`),
     ...remoteRequests.map((url) => `remote request blocked: ${url}`),
     ...loadFailures.map((failure) => `load failure ${failure.errorCode}: ${failure.validatedURL}`),
     ...consoleErrors.map((error) => `console error: ${error.message}`)
   ];
 
-  console.log(JSON.stringify({ ...result, remoteRequests, loadFailures, consoleErrors }, null, 2));
+  console.log(JSON.stringify({ ...result, featureSmoke, remoteRequests, loadFailures, consoleErrors }, null, 2));
 
   if (failures.length > 0) {
     console.error(failures.join('\n'));

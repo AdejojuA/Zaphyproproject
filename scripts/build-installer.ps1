@@ -78,6 +78,7 @@ $startMenuDir = Join-Path ([Environment]::GetFolderPath("Programs")) "Zahpy Busi
 $startMenuShortcut = Join-Path $startMenuDir "Zahpy Business Pro.lnk"
 $uninstallCmd = Join-Path $installRoot "Uninstall Zahpy Business Pro.cmd"
 $uninstallPs1 = Join-Path $installRoot "uninstall.ps1"
+$uninstallVbs = Join-Path $installRoot "uninstall.vbs"
 
 New-Item -ItemType Directory -Path $startMenuDir -Force | Out-Null
 New-ZahpyShortcut $desktopShortcut $appExe $installRoot
@@ -99,7 +100,12 @@ if (Test-Path -LiteralPath `$installRoot) { Remove-Item -LiteralPath `$installRo
 
 Set-Content -LiteralPath $uninstallPs1 -Value $uninstallPs1Content -Encoding UTF8
 Set-Content -LiteralPath $uninstallCmd -Value '@echo off
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0uninstall.ps1"
+powershell -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "%~dp0uninstall.ps1"
+' -Encoding ASCII
+Set-Content -LiteralPath $uninstallVbs -Value 'Set shell = CreateObject("WScript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+scriptPath = fso.BuildPath(fso.GetParentFolderName(WScript.ScriptFullName), "uninstall.ps1")
+shell.Run "powershell -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File " & Chr(34) & scriptPath & Chr(34), 0, True
 ' -Encoding ASCII
 
 $uninstallKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\ZahpyBusinessPro"
@@ -109,7 +115,7 @@ Set-ItemProperty -Path $uninstallKey -Name "DisplayVersion" -Value "1.0.0"
 Set-ItemProperty -Path $uninstallKey -Name "Publisher" -Value "Zahpy Business Pro"
 Set-ItemProperty -Path $uninstallKey -Name "InstallLocation" -Value $installRoot
 Set-ItemProperty -Path $uninstallKey -Name "DisplayIcon" -Value $appExe
-Set-ItemProperty -Path $uninstallKey -Name "UninstallString" -Value "`"$uninstallCmd`""
+Set-ItemProperty -Path $uninstallKey -Name "UninstallString" -Value "wscript.exe //B //Nologo `"$uninstallVbs`""
 Set-ItemProperty -Path $uninstallKey -Name "NoModify" -Value 1 -Type DWord
 Set-ItemProperty -Path $uninstallKey -Name "NoRepair" -Value 1 -Type DWord
 
@@ -148,9 +154,10 @@ public static class ZahpySetup
 
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = "powershell.exe";
-            info.Arguments = "-NoProfile -ExecutionPolicy Bypass -File " + Quote(scriptPath) + " -PayloadZip " + Quote(payloadPath);
+            info.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File " + Quote(scriptPath) + " -PayloadZip " + Quote(payloadPath);
             info.UseShellExecute = false;
-            info.CreateNoWindow = false;
+            info.CreateNoWindow = true;
+            info.WindowStyle = ProcessWindowStyle.Hidden;
 
             using (Process process = Process.Start(info))
             {

@@ -313,7 +313,7 @@
                         </div>
                         <div class="col-span-2">
                             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide ui-str" data-key="lblNotes">Notes</label>
-                            <textarea id="notes" rows="1" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">Thank you for your business. Payment is due within 14 days of receipt.</textarea>
+                            <textarea id="notes" rows="1" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white text-sm rounded-lg block p-2.5">Thank you for your business. Payment is due by the due date shown above. Please include the document number with your payment.</textarea>
                         </div>
                     </div>
                 </div>
@@ -696,7 +696,7 @@
                 <p>&copy; <span id="currentYear"></span> Zahpy Business Pro Edition. All rights reserved.</p>
             </div>
             <div class="text-center sm:text-right flex flex-col sm:items-end justify-center">
-                <button id="termsBtn" class="underline hover:text-white transition-colors font-semibold">Terms & Conditions</button>
+                <button id="termsBtn" class="underline hover:text-white transition-colors font-semibold">Terms & Data Notice</button>
             </div>
         </div>
     </footer>
@@ -710,36 +710,46 @@
         <!-- Terms Modal -->
         <div id="termsModal" class="modal-card bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col hidden shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
             <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                <h2 class="text-xl font-bold text-slate-800 dark:text-white">📜 Terms & Conditions</h2>
+                <h2 class="text-xl font-bold text-slate-800 dark:text-white">Terms & Data Notice</h2>
             </div>
             <div class="p-6 overflow-y-auto text-slate-600 dark:text-slate-300 text-sm space-y-5">
                 <div class="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800/50 font-medium">
-                    <strong>Important Notice:</strong> Zahpy is a completely offline application running inside your browser. We do not use cloud servers. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Zahpy is not responsible for any loss of data.</strong> Clearing your browser cache will permanently erase your invoices if they are not backed up.
+                    <strong>Important Notice:</strong> Zahpy Business Pro is a local desktop app. Your records are stored on your device, not on a Zahpy cloud server. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Back up your workspace regularly.</strong> Device failure, app data removal, or clearing local storage can permanently remove saved records if you do not have a backup.
                 </div>
                 
                 <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">1. Offline-First Architecture & Data Ownership</h4>
-                    <p class="leading-relaxed">Zahpy Pro operates entirely within your web browser. We do not transmit, sync, or store your invoices on any external cloud servers or databases. Your data belongs solely to you and is stored locally on your device.</p>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">1. Local Data & Ownership</h4>
+                    <p class="leading-relaxed">Invoices, estimates, clients, catalog items, payments, design settings, and business settings are saved locally on the device where the app is used. The app does not automatically upload, sync, or store those records on external Zahpy servers.</p>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">2. How to Safeguard Your Data</h4>
-                    <p class="leading-relaxed mb-3">Because your data is not backed up to a cloud server, you are responsible for maintaining your own records. To prevent data loss due to device failure, browser updates, or accidental cache clearing, we strongly advise the following workflow:</p>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">2. Backups & Recordkeeping</h4>
+                    <p class="leading-relaxed mb-3">Because saved data is local, you are responsible for keeping business records and backups. Recommended workflow:</p>
                     <ul class="space-y-3 ml-1">
-                        <li class="flex items-start gap-3"><i class="fas fa-file-pdf mt-1 text-rose-500 w-4 text-center"></i> <span><strong>Export as PDF:</strong> Always download a final PDF copy of every document you create. Store these in a secure folder on your computer or a personal cloud drive.</span></li>
-                        <li class="flex items-start gap-3"><i class="fas fa-save mt-1 text-brand-500 w-4 text-center"></i> <span><strong>Save to History:</strong> Click "Save to History" to keep an editable version in your browser's local storage for future reference.</span></li>
-                        <li class="flex items-start gap-3"><i class="fas fa-print mt-1 text-slate-500 w-4 text-center"></i> <span><strong>Print Physical Copies:</strong> For critical financial records, print hard copies to maintain in your physical filing systems.</span></li>
-                        <li class="flex items-start gap-3"><i class="fas fa-download mt-1 text-emerald-500 w-4 text-center"></i> <span><strong>Backup Workspaces:</strong> Go to the History tab regularly and use the "Backup" button to download a complete file of your entire Zahpy database.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-file-pdf mt-1 text-rose-500 w-4 text-center"></i> <span><strong>Export PDFs:</strong> Keep final PDF copies of documents you send to clients.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-save mt-1 text-brand-500 w-4 text-center"></i> <span><strong>Save to History:</strong> Save editable invoices and estimates before leaving the app.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-download mt-1 text-emerald-500 w-4 text-center"></i> <span><strong>Backup Workspaces:</strong> Use the History tab's Backup button to download a file containing your saved invoices, clients, catalog items, payments, and settings.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-upload mt-1 text-slate-500 w-4 text-center"></i> <span><strong>Restore Carefully:</strong> Restoring a backup replaces the current local workspace with the backup data.</span></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">3. Limitation of Liability</h4>
-                    <p class="leading-relaxed">Zahpy Business Pro and its developers accept no liability for financial loss, lost documents, or data corruption resulting from the use of this software, browser/OS updates, hardware failure, or accidental cache clearance.</p>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">3. Accuracy & Professional Responsibility</h4>
+                    <p class="leading-relaxed">Zahpy Business Pro helps prepare business documents, but it is not legal, tax, accounting, or financial advice. You are responsible for checking invoice totals, tax rates, late fees, payment terms, business information, and client details before sending a document.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">4. External Services</h4>
+                    <p class="leading-relaxed">Email buttons, PayPal links, Stripe links, and other external links open third-party services. Those services require internet access and are governed by their own terms, fees, privacy policies, and account requirements.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">5. PIN Lock & Data Loss</h4>
+                    <p class="leading-relaxed">The optional PIN lock protects the local workspace. Forgotten PINs cannot be recovered. Zahpy Business Pro and its developers are not responsible for lost records, incorrect business entries, failed backups, third-party service issues, or losses related to use of the software.</p>
                 </div>
             </div>
             <div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-                <button class="modal-close bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-200 dark:text-slate-900 text-white px-6 py-2.5 rounded-lg font-bold transition-colors">I Understand and agree</button>
+                <button class="modal-close bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-200 dark:text-slate-900 text-white px-6 py-2.5 rounded-lg font-bold transition-colors">I Understand</button>
             </div>
         </div>
 
@@ -872,7 +882,7 @@
                 lateFee: '10',
                 paypalUser: '',
                 stripeLink: '',
-                notes: 'Thank you for your business. Payment is due within 14 days of receipt.'
+                notes: 'Thank you for your business. Payment is due by the due date shown above. Please include the document number with your payment.'
             };
         }
         function getInvoicePaidTotal(invoice) {

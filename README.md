@@ -1,22 +1,44 @@
 # Zahpy Business Pro
 
-Zahpy Business Pro is a desktop invoicing app packaged with Electron for Windows.
+Zahpy Business Pro is a Windows desktop invoicing app packaged with Electron. It helps small businesses create invoices and estimates, manage saved clients, reuse product or service catalog items, track payments, and export finished documents as PDFs.
+
+## For Users
+
+- Download the Windows zip, extract it, and double-click `Zahpy Business Pro.exe` from the extracted folder.
+- The core app runs locally on the device and does not require internet for invoice creation, saved history, client records, catalog records, payment tracking, PDF export, or dashboard totals.
+- Email buttons, PayPal links, Stripe links, GitHub downloads, and any other external services require internet access.
+- App data is stored locally on the device. Use the History tab's Backup button regularly so invoices, clients, catalog items, payments, and settings can be restored later.
+- Windows may show a SmartScreen warning because this build is not code-signed yet.
+
+Website download link:
+
+```html
+<a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Windows.zip">
+  Download Zahpy Business Pro
+</a>
+```
 
 ## Features
 
 - Create invoices and estimates
-- Track saved invoice history locally
+- Save editable invoice history locally
 - Manage saved clients and quickly apply them to invoices
 - Maintain a product and service catalog for reusable line items
 - Record invoice payments and view paid, partial, and outstanding balances
-- Save tax, business, currency, payment link, and default due-date settings
+- Save business, tax, currency, payment link, and default due-date settings
 - Export invoices as PDF
 - Generate email message templates
-- Dashboard charting and payment-link helpers
-- PIN-based local data protection
-- Offline bundled styles, fonts, icons, and browser libraries
+- View dashboard totals and payment status summaries
+- Protect the local workspace with an optional PIN lock
+- Run with bundled styles, fonts, icons, and browser libraries
 
-## Requirements
+## Important Notes
+
+Zahpy Business Pro is a business document tool, not legal, tax, accounting, or financial advice. Users are responsible for verifying invoice totals, tax rates, payment terms, business details, and recordkeeping requirements before sending documents to clients.
+
+The optional PIN lock protects the local app workspace, but forgotten PINs cannot be recovered. Keep separate backups of important business records.
+
+## Developer Requirements
 
 - Node.js
 - npm
@@ -35,6 +57,12 @@ Run the desktop app:
 npm start
 ```
 
+Run the offline smoke test:
+
+```bash
+npm run smoke:offline
+```
+
 ## Build
 
 Create a portable Windows executable:
@@ -43,14 +71,14 @@ Create a portable Windows executable:
 npm run dist
 ```
 
-The build output is configured to write to the parent workspace `outputs` folder.
-
-Current package files are written to:
+The build output is configured to write to:
 
 ```text
 C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs
 ```
 
-## Notes
+The downloadable package is:
 
-The core app now runs offline because Tailwind, Font Awesome, fonts, Chart.js, html2pdf, qrcodejs, and crypto-js are bundled locally. External services such as Gmail, Outlook, Yahoo Mail, PayPal, and Stripe still require internet access when opened.
+```text
+C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Windows.zip
+```

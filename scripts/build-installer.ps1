@@ -151,38 +151,60 @@ public static class ZahpySetup
                 return 0;
             }
 
-            string exePath = Process.GetCurrentProcess().MainModule.FileName;
-            tempDir = Path.Combine(Path.GetTempPath(), "zahpy-setup-" + Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(tempDir);
-
-            string payloadPath = Path.Combine(tempDir, "payload.zip");
-            string scriptPath = Path.Combine(tempDir, "install.ps1");
-
-            ExtractPayload(exePath, payloadPath);
-            File.WriteAllText(scriptPath, Encoding.UTF8.GetString(Convert.FromBase64String("$installScriptBase64")), Encoding.UTF8);
-
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = "powershell.exe";
-            info.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File " + Quote(scriptPath) + " -PayloadZip " + Quote(payloadPath);
-            info.UseShellExecute = false;
-            info.CreateNoWindow = true;
-            info.WindowStyle = ProcessWindowStyle.Hidden;
-
-            using (Process process = Process.Start(info))
+            using (ProgressDialog progress = new ProgressDialog())
             {
-                process.WaitForExit();
-                if (process.ExitCode != 0)
+                progress.Show();
+                progress.SetStatus("Preparing installer...");
+                Application.DoEvents();
+
+                string exePath = Process.GetCurrentProcess().MainModule.FileName;
+                tempDir = Path.Combine(Path.GetTempPath(), "zahpy-setup-" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(tempDir);
+
+                string payloadPath = Path.Combine(tempDir, "payload.zip");
+                string scriptPath = Path.Combine(tempDir, "install.ps1");
+
+                progress.SetStatus("Extracting app package...");
+                Application.DoEvents();
+                ExtractPayload(exePath, payloadPath);
+
+                progress.SetStatus("Preparing installation steps...");
+                Application.DoEvents();
+                File.WriteAllText(scriptPath, Encoding.UTF8.GetString(Convert.FromBase64String("$installScriptBase64")), Encoding.UTF8);
+
+                ProcessStartInfo info = new ProcessStartInfo();
+                info.FileName = "powershell.exe";
+                info.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File " + Quote(scriptPath) + " -PayloadZip " + Quote(payloadPath);
+                info.UseShellExecute = false;
+                info.CreateNoWindow = true;
+                info.WindowStyle = ProcessWindowStyle.Hidden;
+
+                progress.SetStatus("Installing files and creating shortcuts...");
+                Application.DoEvents();
+
+                using (Process process = Process.Start(info))
                 {
-                    throw new Exception("Installer script exited with code " + process.ExitCode + ".");
-                }
-            }
+                    while (!process.WaitForExit(200))
+                    {
+                        Application.DoEvents();
+                    }
 
-            try
-            {
-                Directory.Delete(tempDir, true);
-            }
-            catch
-            {
+                    if (process.ExitCode != 0)
+                    {
+                        throw new Exception("Installer script exited with code " + process.ExitCode + ".");
+                    }
+                }
+
+                progress.SetStatus("Finishing installation...");
+                Application.DoEvents();
+
+                try
+                {
+                    Directory.Delete(tempDir, true);
+                }
+                catch
+                {
+                }
             }
 
             return 0;
@@ -211,37 +233,77 @@ public static class ZahpySetup
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
-            ShowIcon = true;
-            ClientSize = new Size(640, 540);
+            ShowIcon = false;
+            ClientSize = new Size(720, 560);
             BackColor = Color.White;
             Font = new Font("Segoe UI", 9F);
 
+            Color navy = Color.FromArgb(15, 23, 42);
+            Color blue = Color.FromArgb(37, 99, 235);
+            Color slate = Color.FromArgb(71, 85, 105);
+            Color light = Color.FromArgb(248, 250, 252);
+            Color border = Color.FromArgb(226, 232, 240);
+
+            Panel header = new Panel();
+            header.BackColor = navy;
+            header.Location = new Point(0, 0);
+            header.Size = new Size(720, 104);
+
+            Panel accent = new Panel();
+            accent.BackColor = blue;
+            accent.Location = new Point(0, 0);
+            accent.Size = new Size(8, 104);
+
+            Label brand = new Label();
+            brand.Text = "Zahpy Business Pro";
+            brand.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            brand.ForeColor = Color.White;
+            brand.Location = new Point(28, 22);
+            brand.Size = new Size(420, 36);
+
             Label title = new Label();
-            title.Text = "Install Zahpy Business Pro";
-            title.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
-            title.ForeColor = Color.FromArgb(15, 23, 42);
-            title.Location = new Point(24, 22);
-            title.Size = new Size(590, 34);
+            title.Text = "Professional invoicing desktop setup";
+            title.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            title.ForeColor = Color.FromArgb(203, 213, 225);
+            title.Location = new Point(30, 60);
+            title.Size = new Size(520, 24);
+
+            Label badge = new Label();
+            badge.Text = "INSTALLER";
+            badge.TextAlign = ContentAlignment.MiddleCenter;
+            badge.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            badge.ForeColor = Color.White;
+            badge.BackColor = blue;
+            badge.Location = new Point(582, 34);
+            badge.Size = new Size(96, 28);
+
+            header.Controls.Add(accent);
+            header.Controls.Add(brand);
+            header.Controls.Add(title);
+            header.Controls.Add(badge);
 
             Label subtitle = new Label();
             subtitle.Text = "Review the install details and terms before continuing.";
-            subtitle.ForeColor = Color.FromArgb(71, 85, 105);
-            subtitle.Location = new Point(26, 62);
-            subtitle.Size = new Size(590, 24);
+            subtitle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            subtitle.ForeColor = navy;
+            subtitle.Location = new Point(28, 126);
+            subtitle.Size = new Size(620, 26);
 
             Label location = new Label();
             location.Text = "Install location: " + Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Programs\Zahpy Business Pro");
-            location.ForeColor = Color.FromArgb(51, 65, 85);
-            location.Location = new Point(26, 100);
-            location.Size = new Size(590, 24);
+            location.ForeColor = slate;
+            location.Location = new Point(30, 158);
+            location.Size = new Size(650, 24);
 
             TextBox terms = new TextBox();
             terms.Multiline = true;
             terms.ReadOnly = true;
             terms.ScrollBars = ScrollBars.Vertical;
             terms.BorderStyle = BorderStyle.FixedSingle;
-            terms.Location = new Point(26, 134);
-            terms.Size = new Size(588, 270);
+            terms.BackColor = light;
+            terms.ForeColor = Color.FromArgb(30, 41, 59);
+            terms.Location = new Point(30, 194);
+            terms.Size = new Size(660, 238);
             terms.Text =
                 "Zahpy Business Pro Setup" + Environment.NewLine + Environment.NewLine +
                 "This installer will copy Zahpy Business Pro to the current user's local Programs folder, create a desktop shortcut, create a Start Menu shortcut, register an uninstall entry, and launch the app after installation." + Environment.NewLine + Environment.NewLine +
@@ -260,29 +322,44 @@ public static class ZahpySetup
 
             CheckBox agree = new CheckBox();
             agree.Text = "I have read and agree to these terms.";
-            agree.ForeColor = Color.FromArgb(30, 41, 59);
-            agree.Location = new Point(26, 418);
-            agree.Size = new Size(420, 26);
+            agree.ForeColor = navy;
+            agree.Location = new Point(30, 448);
+            agree.Size = new Size(430, 26);
 
             Button cancel = new Button();
             cancel.Text = "Cancel";
             cancel.DialogResult = DialogResult.Cancel;
-            cancel.Location = new Point(410, 470);
-            cancel.Size = new Size(92, 34);
+            cancel.FlatStyle = FlatStyle.Flat;
+            cancel.UseVisualStyleBackColor = false;
+            cancel.BackColor = Color.White;
+            cancel.ForeColor = navy;
+            cancel.FlatAppearance.BorderColor = border;
+            cancel.Location = new Point(488, 494);
+            cancel.Size = new Size(94, 36);
 
             Button install = new Button();
             install.Text = "Install";
             install.DialogResult = DialogResult.OK;
             install.Enabled = false;
-            install.Location = new Point(520, 470);
-            install.Size = new Size(92, 34);
+            install.FlatStyle = FlatStyle.Flat;
+            install.UseVisualStyleBackColor = false;
+            install.BackColor = blue;
+            install.ForeColor = Color.White;
+            install.FlatAppearance.BorderColor = blue;
+            install.Location = new Point(596, 494);
+            install.Size = new Size(94, 36);
 
             agree.CheckedChanged += delegate
             {
                 install.Enabled = agree.Checked;
+                install.BackColor = agree.Checked ? blue : Color.FromArgb(148, 163, 184);
+                install.FlatAppearance.BorderColor = install.BackColor;
             };
 
-            Controls.Add(title);
+            install.BackColor = Color.FromArgb(148, 163, 184);
+            install.FlatAppearance.BorderColor = install.BackColor;
+
+            Controls.Add(header);
             Controls.Add(subtitle);
             Controls.Add(location);
             Controls.Add(terms);
@@ -292,6 +369,87 @@ public static class ZahpySetup
 
             AcceptButton = install;
             CancelButton = cancel;
+        }
+    }
+
+    private sealed class ProgressDialog : Form
+    {
+        private readonly Label statusLabel;
+        private readonly ProgressBar progressBar;
+
+        public ProgressDialog()
+        {
+            Text = "Installing Zahpy Business Pro";
+            StartPosition = FormStartPosition.CenterScreen;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            ControlBox = false;
+            ShowIcon = false;
+            ClientSize = new Size(520, 230);
+            BackColor = Color.White;
+            Font = new Font("Segoe UI", 9F);
+
+            Color navy = Color.FromArgb(15, 23, 42);
+            Color blue = Color.FromArgb(37, 99, 235);
+            Color slate = Color.FromArgb(71, 85, 105);
+
+            Panel header = new Panel();
+            header.BackColor = navy;
+            header.Location = new Point(0, 0);
+            header.Size = new Size(520, 78);
+
+            Panel accent = new Panel();
+            accent.BackColor = blue;
+            accent.Location = new Point(0, 0);
+            accent.Size = new Size(8, 78);
+
+            Label title = new Label();
+            title.Text = "Installing Zahpy Business Pro";
+            title.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            title.ForeColor = Color.White;
+            title.Location = new Point(26, 18);
+            title.Size = new Size(460, 30);
+
+            Label subtitle = new Label();
+            subtitle.Text = "Please wait while setup finishes.";
+            subtitle.ForeColor = Color.FromArgb(203, 213, 225);
+            subtitle.Location = new Point(28, 49);
+            subtitle.Size = new Size(420, 20);
+
+            header.Controls.Add(accent);
+            header.Controls.Add(title);
+            header.Controls.Add(subtitle);
+
+            statusLabel = new Label();
+            statusLabel.Text = "Preparing installer...";
+            statusLabel.ForeColor = slate;
+            statusLabel.Location = new Point(30, 112);
+            statusLabel.Size = new Size(460, 24);
+
+            progressBar = new ProgressBar();
+            progressBar.Style = ProgressBarStyle.Marquee;
+            progressBar.MarqueeAnimationSpeed = 28;
+            progressBar.Location = new Point(30, 150);
+            progressBar.Size = new Size(460, 18);
+
+            Label note = new Label();
+            note.Text = "This may take a moment on the first install.";
+            note.ForeColor = Color.FromArgb(100, 116, 139);
+            note.Location = new Point(30, 180);
+            note.Size = new Size(460, 22);
+
+            Controls.Add(header);
+            Controls.Add(statusLabel);
+            Controls.Add(progressBar);
+            Controls.Add(note);
+        }
+
+        public void SetStatus(string message)
+        {
+            statusLabel.Text = message;
+            statusLabel.Refresh();
+            progressBar.Refresh();
         }
     }
 

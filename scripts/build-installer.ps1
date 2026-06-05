@@ -62,12 +62,16 @@ $installRoot = Join-Path $env:LOCALAPPDATA "Programs\Zahpy Business Pro"
 $parentDir = Split-Path $installRoot -Parent
 $tempDir = Join-Path $env:TEMP ("zahpy-install-" + [guid]::NewGuid().ToString("N"))
 
-function New-ZahpyShortcut($shortcutPath, $targetPath, $workingDirectory) {
+function New-ZahpyShortcut($shortcutPath, $targetPath, $workingDirectory, $iconPath) {
   $shell = New-Object -ComObject WScript.Shell
   $shortcut = $shell.CreateShortcut($shortcutPath)
   $shortcut.TargetPath = $targetPath
   $shortcut.WorkingDirectory = $workingDirectory
-  $shortcut.IconLocation = $targetPath
+  if ($iconPath -and (Test-Path -LiteralPath $iconPath)) {
+    $shortcut.IconLocation = $iconPath
+  } else {
+    $shortcut.IconLocation = $targetPath
+  }
   $shortcut.Save()
 }
 
@@ -87,10 +91,16 @@ $startMenuShortcut = Join-Path $startMenuDir "Zahpy Business Pro.lnk"
 $uninstallCmd = Join-Path $installRoot "Uninstall Zahpy Business Pro.cmd"
 $uninstallPs1 = Join-Path $installRoot "uninstall.ps1"
 $uninstallVbs = Join-Path $installRoot "uninstall.vbs"
+$shortcutIcon = Join-Path $installRoot "resources\assets\icon.ico"
+$displayIcon = $appExe
+
+if (Test-Path -LiteralPath $shortcutIcon) {
+  $displayIcon = $shortcutIcon
+}
 
 New-Item -ItemType Directory -Path $startMenuDir -Force | Out-Null
-New-ZahpyShortcut $desktopShortcut $appExe $installRoot
-New-ZahpyShortcut $startMenuShortcut $appExe $installRoot
+New-ZahpyShortcut $desktopShortcut $appExe $installRoot $shortcutIcon
+New-ZahpyShortcut $startMenuShortcut $appExe $installRoot $shortcutIcon
 
 $uninstallPs1Content = @"
 `$ErrorActionPreference = "Stop"
@@ -122,7 +132,7 @@ Set-ItemProperty -Path $uninstallKey -Name "DisplayName" -Value "Zahpy Business 
 Set-ItemProperty -Path $uninstallKey -Name "DisplayVersion" -Value "1.0.0"
 Set-ItemProperty -Path $uninstallKey -Name "Publisher" -Value "Zahpy Business Pro"
 Set-ItemProperty -Path $uninstallKey -Name "InstallLocation" -Value $installRoot
-Set-ItemProperty -Path $uninstallKey -Name "DisplayIcon" -Value $appExe
+Set-ItemProperty -Path $uninstallKey -Name "DisplayIcon" -Value $displayIcon
 Set-ItemProperty -Path $uninstallKey -Name "UninstallString" -Value "wscript.exe //B //Nologo `"$uninstallVbs`""
 Set-ItemProperty -Path $uninstallKey -Name "NoModify" -Value 1 -Type DWord
 Set-ItemProperty -Path $uninstallKey -Name "NoRepair" -Value 1 -Type DWord

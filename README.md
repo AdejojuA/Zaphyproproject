@@ -7,7 +7,7 @@ Zahpy Business Pro is a Windows desktop invoicing app packaged with Electron. It
 Zahpy Business Pro now has two Windows delivery options:
 
 - Standalone edition: a zip file that runs from an extracted folder and keeps the core app fully local/offline.
-- Installer edition: a Windows setup app that installs to the current user's local Programs folder, creates shortcuts, and can check GitHub Releases for newer versions.
+- Installer edition: a Windows setup app that shows install details and terms before installation, installs to the current user's local Programs folder, creates shortcuts, and can check GitHub Releases for newer versions.
 
 ## For Users
 

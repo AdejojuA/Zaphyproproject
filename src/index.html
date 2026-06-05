@@ -63,9 +63,179 @@
         
         /* Great Vibes Signature Font */
         .font-signature { font-family: 'Great Vibes', cursive; }
+
+        /* Startup Animation */
+        .startup-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #0f172a;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 46%, #e0f2fe 100%);
+            transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+
+        .dark .startup-screen {
+            color: #f8fafc;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 58%, #082f49 100%);
+        }
+
+        .startup-screen::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(100deg, transparent 0%, rgba(14, 165, 233, 0.14) 45%, transparent 72%);
+            transform: translateX(-100%);
+            animation: startupSweep 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .startup-screen.is-hiding {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .startup-shell {
+            position: relative;
+            width: min(360px, calc(100vw - 48px));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 14px;
+            padding: 24px;
+        }
+
+        .startup-logo-stage {
+            position: relative;
+            width: 88px;
+            height: 88px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: #0f172a;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.18);
+            animation: startupLift 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .dark .startup-logo-stage {
+            background: #f8fafc;
+            box-shadow: 0 18px 50px rgba(2, 6, 23, 0.45);
+        }
+
+        .startup-logo-stage::before {
+            content: "";
+            position: absolute;
+            inset: -7px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            border-top-color: #0ea5e9;
+            border-right-color: rgba(14, 165, 233, 0.45);
+            animation: startupSpin 1.2s linear infinite;
+        }
+
+        .startup-logo-mark {
+            width: 58px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0ea5e9, #0369a1);
+            font-size: 32px;
+            font-weight: 900;
+            line-height: 1;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+        }
+
+        .startup-title {
+            margin-top: 10px;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+
+        .startup-status {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .dark .startup-status {
+            color: #cbd5e1;
+        }
+
+        .startup-progress {
+            position: relative;
+            width: 220px;
+            height: 6px;
+            margin-top: 4px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.28);
+        }
+
+        .startup-progress span {
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 42%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #0ea5e9, #2563eb);
+            animation: startupProgress 1.05s ease-in-out infinite;
+        }
+
+        @keyframes startupLift {
+            from { opacity: 0; transform: translateY(14px) scale(0.94); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes startupSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes startupProgress {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(240%); }
+        }
+
+        @keyframes startupSweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .startup-screen,
+            .startup-screen::before,
+            .startup-logo-stage,
+            .startup-logo-stage::before,
+            .startup-progress span {
+                animation: none;
+                transition: none;
+            }
+
+            .startup-screen::before { display: none; }
+            .startup-progress span {
+                width: 100%;
+                transform: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-200 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-200 min-h-screen flex flex-col antialiased">
+
+    <div id="startupScreen" class="startup-screen no-print" role="status" aria-live="polite" aria-label="Zahpy Business Pro is starting">
+        <div class="startup-shell">
+            <div class="startup-logo-stage" aria-hidden="true">
+                <div class="startup-logo-mark">Z</div>
+            </div>
+            <div class="startup-title">Zahpy Business Pro</div>
+            <div class="startup-status">Preparing workspace</div>
+            <div class="startup-progress" aria-hidden="true"><span></span></div>
+        </div>
+    </div>
 
     <!-- NAVIGATION WITH AMPLIFIED GLASSMORPHISM -->
     <nav class="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-300/50 dark:border-slate-800/50 sticky top-0 z-40 no-print shadow-sm">
@@ -884,6 +1054,8 @@
         
         // Security State
         let sessionPin = null;
+        const startupStartedAt = performance.now();
+        let startupDismissed = false;
 
         // --- Core UI Functions ---
         function getT() { return i18n[currentLang] || i18n['en']; }
@@ -894,6 +1066,19 @@
         function getNumeric(value) { return parseFloat(value) || 0; }
         function todayISO() { return new Date().toISOString().split('T')[0]; }
         function addDaysISO(days) { return new Date(Date.now() + (parseInt(days, 10) || 0) * 86400000).toISOString().split('T')[0]; }
+        function finishStartupAnimation() {
+            const screen = document.getElementById('startupScreen');
+            if (!screen || startupDismissed) return;
+
+            startupDismissed = true;
+            const remaining = Math.max(0, 900 - (performance.now() - startupStartedAt));
+
+            setTimeout(() => {
+                screen.classList.add('is-hiding');
+                screen.setAttribute('aria-hidden', 'true');
+                setTimeout(() => screen.remove(), 500);
+            }, remaining);
+        }
         function getDefaultBusinessSettings() {
             return {
                 businessName: 'Zahpy Solutions',
@@ -2193,6 +2378,8 @@
                 renderItems(); updatePreview(); showToast('Applied to Invoice');
                 document.querySelector('[data-target="createView"]').click();
             });
+
+            finishStartupAnimation();
         }
 
         document.addEventListener('DOMContentLoaded', init);

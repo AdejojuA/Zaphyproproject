@@ -12,7 +12,8 @@
     "smoke:offline": "npm run build:css && electron ./scripts/smoke-offline.cjs",
     "dist": "npm run dist:standalone",
     "dist:standalone": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist --config.win.signAndEditExecutable=false && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-standalone.ps1",
-    "dist:installer": "npm run build:css && electron-builder --win nsis --x64 --publish never --config.electronDist=node_modules/electron/dist",
+    "dist:installer": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist --config.win.signAndEditExecutable=false && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-installer.ps1",
+    "dist:installer:nsis": "npm run build:css && electron-builder --win nsis --x64 --publish never --config.electronDist=node_modules/electron/dist",
     "dist:portable": "npm run build:css && electron-builder --win portable --x64"
   },
   "devDependencies": {

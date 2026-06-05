@@ -10,7 +10,10 @@
     "build:css": "tailwindcss -c tailwind.config.js -i ./src/styles/tailwind.input.css -o ./src/vendor/tailwind.css --minify",
     "start": "npm run build:css && electron .",
     "smoke:offline": "npm run build:css && electron ./scripts/smoke-offline.cjs",
-    "dist": "npm run build:css && electron-builder --win portable --x64"
+    "dist": "npm run dist:standalone",
+    "dist:standalone": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist --config.win.signAndEditExecutable=false && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-standalone.ps1",
+    "dist:installer": "npm run build:css && electron-builder --win nsis --x64 --publish never --config.electronDist=node_modules/electron/dist",
+    "dist:portable": "npm run build:css && electron-builder --win portable --x64"
   },
   "devDependencies": {
     "@fontsource/caveat": "^5.2.8",
@@ -40,7 +43,7 @@
       "icon": "assets/icon.ico",
       "target": [
         {
-          "target": "portable",
+          "target": "dir",
           "arch": [
             "x64"
           ]
@@ -49,6 +52,21 @@
     },
     "portable": {
       "artifactName": "ZahpyBusinessPro.exe"
+    },
+    "nsis": {
+      "artifactName": "ZahpyBusinessPro-Setup.exe",
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Zahpy Business Pro"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "AdejojuA",
+      "repo": "Zaphyproproject"
     }
   }
 }

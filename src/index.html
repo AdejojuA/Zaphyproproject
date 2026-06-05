@@ -508,6 +508,31 @@
             <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-4 ui-str" data-key="tabSettings">Settings & Tools</h2>
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 space-y-6">
                 <div>
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white"><i class="fas fa-cloud-arrow-down text-brand-500 mr-2"></i> Online & Updates</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Edition</p>
+                            <p id="desktopEditionText" class="text-sm font-bold text-slate-800 dark:text-white">Checking...</p>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Network</p>
+                            <p id="onlineNetworkText" class="text-sm font-bold text-slate-800 dark:text-white">Checking...</p>
+                        </div>
+                        <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Update Status</p>
+                            <p id="updateStatusText" class="text-sm font-bold text-slate-800 dark:text-white">Ready</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <button id="checkUpdatesBtn" class="px-4 py-2 bg-brand-600 text-white hover:bg-brand-700 rounded-lg text-sm font-bold transition-colors">Check for Updates</button>
+                        <button id="downloadUpdateBtn" class="hidden px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg text-sm font-bold transition-colors">Download Update</button>
+                        <button id="openReleasesBtn" class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">Open Releases</button>
+                    </div>
+                </div>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-6">
+
+                <div>
                     <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white"><i class="fas fa-briefcase text-brand-500 mr-2"></i> Tax & Business Defaults</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                         <div class="md:col-span-2">
@@ -1468,6 +1493,88 @@
             reader.readAsText(file);
         }
 
+        let pendingInstallerDownloadUrl = '';
+
+        function setUpdateStatus(message, tone='slate') {
+            const status = getEl('updateStatusText');
+            if (!status) return;
+            status.textContent = message;
+            status.className = `text-sm font-bold ${
+                tone === 'success' ? 'text-emerald-600 dark:text-emerald-400'
+                : tone === 'warning' ? 'text-amber-600 dark:text-amber-400'
+                : tone === 'error' ? 'text-rose-600 dark:text-rose-400'
+                : 'text-slate-800 dark:text-white'
+            }`;
+        }
+
+        function refreshNetworkStatus() {
+            const network = getEl('onlineNetworkText');
+            if (!network) return;
+            const online = navigator.onLine;
+            network.textContent = online ? 'Online' : 'Offline';
+            network.className = `text-sm font-bold ${online ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
+        }
+
+        async function initOnlineUpdateTools() {
+            const desktopApi = window.zahpyDesktop;
+            const edition = getEl('desktopEditionText');
+            const checkBtn = getEl('checkUpdatesBtn');
+            const downloadBtn = getEl('downloadUpdateBtn');
+            const releasesBtn = getEl('openReleasesBtn');
+            if (!edition || !checkBtn || !downloadBtn || !releasesBtn) return;
+
+            refreshNetworkStatus();
+            window.addEventListener('online', refreshNetworkStatus);
+            window.addEventListener('offline', refreshNetworkStatus);
+
+            if (!desktopApi) {
+                edition.textContent = 'Browser Preview';
+                checkBtn.disabled = true;
+                checkBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                releasesBtn.disabled = true;
+                releasesBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                setUpdateStatus('Desktop bridge unavailable', 'warning');
+                return;
+            }
+
+            const runtime = await desktopApi.getRuntimeInfo();
+            edition.textContent = `${runtime.edition} v${runtime.version}`;
+
+            releasesBtn.addEventListener('click', () => desktopApi.openReleases());
+            downloadBtn.addEventListener('click', () => {
+                desktopApi.openDownload(pendingInstallerDownloadUrl || runtime.installerDownloadUrl);
+            });
+
+            checkBtn.addEventListener('click', async () => {
+                if (!navigator.onLine) {
+                    setUpdateStatus('Offline', 'error');
+                    return;
+                }
+
+                checkBtn.disabled = true;
+                checkBtn.textContent = 'Checking...';
+                downloadBtn.classList.add('hidden');
+                setUpdateStatus('Checking GitHub...', 'slate');
+
+                try {
+                    const result = await desktopApi.checkForUpdates();
+                    if (result.updateAvailable) {
+                        pendingInstallerDownloadUrl = result.installerDownloadUrl;
+                        downloadBtn.classList.remove('hidden');
+                        setUpdateStatus(`Update available: v${result.latestVersion}`, 'warning');
+                    } else {
+                        pendingInstallerDownloadUrl = '';
+                        setUpdateStatus(`Current: v${result.currentVersion}`, 'success');
+                    }
+                } catch (error) {
+                    setUpdateStatus('Update check failed', 'error');
+                } finally {
+                    checkBtn.disabled = false;
+                    checkBtn.textContent = 'Check for Updates';
+                }
+            });
+        }
+
         // --- Invoice Logic ---
         function renderItems() {
             const cont = document.getElementById('itemsContainer');
@@ -1940,6 +2047,7 @@
                 updatePreview();
             });
             loadDesignSettings();
+            initOnlineUpdateTools();
 
             // Workspace managers
             document.getElementById('saveBusinessSettingsBtn').addEventListener('click', saveBusinessSettings);

@@ -2,19 +2,34 @@
 
 Zahpy Business Pro is a Windows desktop invoicing app packaged with Electron. It helps small businesses create invoices and estimates, manage saved clients, reuse product or service catalog items, track payments, and export finished documents as PDFs.
 
+## Editions
+
+Zahpy Business Pro now has two Windows delivery options:
+
+- Standalone edition: a zip file that runs from an extracted folder and keeps the core app fully local/offline.
+- Installer edition: a Windows setup app that installs shortcuts and can check GitHub Releases for newer versions.
+
 ## For Users
 
 - Download the Windows zip, extract it, and double-click `Zahpy Business Pro.exe` from the extracted folder.
 - The core app runs locally on the device and does not require internet for invoice creation, saved history, client records, catalog records, payment tracking, PDF export, or dashboard totals.
-- Email buttons, PayPal links, Stripe links, GitHub downloads, and any other external services require internet access.
+- Email buttons, PayPal links, Stripe links, update checks, GitHub downloads, and any other external services require internet access.
 - App data is stored locally on the device. Use the History tab's Backup button regularly so invoices, clients, catalog items, payments, and settings can be restored later.
 - Windows may show a SmartScreen warning because this build is not code-signed yet.
 
-Website download link:
+Standalone website download link:
 
 ```html
 <a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Windows.zip">
-  Download Zahpy Business Pro
+  Download Zahpy Business Pro Standalone
+</a>
+```
+
+Installer website download link:
+
+```html
+<a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Setup.exe">
+  Download Zahpy Business Pro Installer
 </a>
 ```
 
@@ -30,6 +45,7 @@ Website download link:
 - Generate email message templates
 - View dashboard totals and payment status summaries
 - Protect the local workspace with an optional PIN lock
+- Check GitHub Releases for updates from the desktop app
 - Run with bundled styles, fonts, icons, and browser libraries
 
 ## Important Notes
@@ -65,10 +81,16 @@ npm run smoke:offline
 
 ## Build
 
-Create a portable Windows executable:
+Create the standalone folder zip:
 
 ```bash
-npm run dist
+npm run dist:standalone
+```
+
+Create the installer build:
+
+```bash
+npm run dist:installer
 ```
 
 The build output is configured to write to:
@@ -82,3 +104,11 @@ The downloadable package is:
 ```text
 C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Windows.zip
 ```
+
+The installer package is:
+
+```text
+C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Setup.exe
+```
+
+For online update checks to work from the installed app, publish a GitHub Release and upload the installer asset. If electron-builder generates update metadata such as `latest.yml` or `.blockmap` files, upload those assets to the same release too.

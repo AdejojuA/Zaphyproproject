@@ -17,7 +17,7 @@ Zahpy Business Pro now has two Windows delivery options:
 - App data is stored locally on the device. Use the History tab's Backup button regularly so invoices, clients, catalog items, payments, and settings can be restored later.
 - Windows may show a SmartScreen warning because this build is not code-signed yet.
 
-Standalone website download link:
+Standalone download link for your product/download page:
 
 ```html
 <a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Windows.zip">
@@ -25,7 +25,7 @@ Standalone website download link:
 </a>
 ```
 
-Installer website download link:
+Installer download link for your product/download page:
 
 ```html
 <a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Setup.exe">
@@ -53,6 +53,8 @@ Installer website download link:
 Zahpy Business Pro is a business document tool, not legal, tax, accounting, or financial advice. Users are responsible for verifying invoice totals, tax rates, payment terms, business details, and recordkeeping requirements before sending documents to clients.
 
 The optional PIN lock protects the local app workspace, but forgotten PINs cannot be recovered. Keep separate backups of important business records.
+
+Both Windows editions are desktop apps. The standalone edition runs from an extracted folder, while the installer edition copies the app to the current user's local Programs folder, creates shortcuts, registers an uninstall entry, and can check GitHub Releases for newer versions. In both editions, core workspace records are stored locally for the Windows user profile unless the user chooses to open an external service or download link.
 
 ## Developer Requirements
 

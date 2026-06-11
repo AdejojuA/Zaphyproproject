@@ -394,20 +394,24 @@ public static class ZahpySetup
             terms.Location = new Point(30, 350);
             terms.Size = new Size(660, 198);
             terms.Text =
-                "Zahpy Business Pro Setup" + Environment.NewLine + Environment.NewLine +
-                "This installer will copy Zahpy Business Pro to the current user's local Programs folder, create a desktop shortcut, create a Start Menu shortcut, register an uninstall entry, and launch the app after installation." + Environment.NewLine + Environment.NewLine +
-                "Local data and backups:" + Environment.NewLine +
-                "- Zahpy Business Pro stores invoices, clients, catalog items, payments, and settings on this device." + Environment.NewLine +
-                "- The app does not automatically upload or sync your business records to a Zahpy cloud server." + Environment.NewLine +
-                "- Use the app's Backup button regularly and keep copies of important business records." + Environment.NewLine + Environment.NewLine +
-                "Accuracy and responsibility:" + Environment.NewLine +
-                "- Zahpy Business Pro is a document tool, not legal, tax, accounting, or financial advice." + Environment.NewLine +
-                "- You are responsible for checking invoice totals, tax rates, payment terms, business details, and client details before sending documents." + Environment.NewLine + Environment.NewLine +
-                "Online features:" + Environment.NewLine +
-                "- The core app can run locally. Update checks, GitHub downloads, email links, PayPal links, Stripe links, and other third-party services require internet access." + Environment.NewLine +
-                "- Third-party services are governed by their own terms, fees, privacy policies, and account requirements." + Environment.NewLine + Environment.NewLine +
-                "Security:" + Environment.NewLine +
-                "- If you enable the optional PIN lock, forgotten PINs cannot be recovered.";
+                "Zahpy Business Pro Desktop Setup" + Environment.NewLine + Environment.NewLine +
+                "This installer copies Zahpy Business Pro to the current user's local Programs folder, creates Desktop and Start Menu shortcuts, registers an uninstall entry, and launches the desktop app after installation." + Environment.NewLine + Environment.NewLine +
+                "Desktop app and local workspace:" + Environment.NewLine +
+                "- Zahpy Business Pro prepares invoices, estimates, PDF exports, email drafts, payment records, dashboard summaries, client records, product/service catalog items, business defaults, and tax settings." + Environment.NewLine +
+                "- App records are stored locally for the Windows user profile on this device. Zahpy Business Pro does not automatically upload, sync, host, or sell your business records through a Zahpy cloud service." + Environment.NewLine + Environment.NewLine +
+                "Backups and recordkeeping:" + Environment.NewLine +
+                "- Use Save to History for editable invoices and estimates before closing or updating the app." + Environment.NewLine +
+                "- Use the History tab's Backup button to export saved invoices, clients, catalog items, payments, business settings, and tax settings." + Environment.NewLine +
+                "- Restoring a backup replaces the current local workspace with the contents of the backup file." + Environment.NewLine + Environment.NewLine +
+                "Accuracy and professional responsibility:" + Environment.NewLine +
+                "- Zahpy Business Pro is a business document tool. It is not legal, tax, accounting, financial, or compliance advice." + Environment.NewLine +
+                "- You are responsible for checking document numbers, totals, tax rates, late fees, payment terms, business information, client details, and recordkeeping requirements before sending or relying on a document." + Environment.NewLine + Environment.NewLine +
+                "Internet features and external services:" + Environment.NewLine +
+                "- The core app can run locally and offline after installation. Update checks, GitHub downloads, email compose buttons, PayPal links, Stripe links, and other external links require internet access and may open third-party websites or apps." + Environment.NewLine +
+                "- Third-party services are governed by their own terms, fees, privacy policies, availability, and account requirements." + Environment.NewLine + Environment.NewLine +
+                "Security, updates, and data loss:" + Environment.NewLine +
+                "- If you enable the optional PIN lock, forgotten PINs cannot be recovered." + Environment.NewLine +
+                "- Keep separate backups before updating, uninstalling, restoring data, or moving to another computer.";
 
             CheckBox agree = new CheckBox();
             agree.Text = "I have read and agree to these terms.";

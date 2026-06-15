@@ -4,9 +4,10 @@ Zahpy Business Pro is a Windows desktop invoicing app packaged with Electron. It
 
 ## Editions
 
-Zahpy Business Pro now has two Windows delivery options:
+Zahpy Business Pro now has three Windows delivery options:
 
 - Standalone edition: a zip file that runs from an extracted folder and keeps the core app fully local/offline.
+- One-file standalone edition: a single portable `.exe` that extracts the app to a temporary cache and launches without creating shortcuts or installer registry entries.
 - Installer edition: a Windows setup app that shows install details and terms before installation, installs to the current user's local Programs folder, creates shortcuts, and can check GitHub Releases for newer versions.
 
 ## For Users
@@ -38,6 +39,14 @@ Installer download link for your product/download page:
 ```html
 <a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Setup.exe">
   Download Zahpy Business Pro Installer
+</a>
+```
+
+One-file standalone download link:
+
+```html
+<a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Standalone.exe">
+  Download Zahpy Business Pro One-File Standalone
 </a>
 ```
 
@@ -103,6 +112,12 @@ Create the installer build:
 npm run dist:installer
 ```
 
+Create the one-file standalone executable:
+
+```bash
+npm run dist:portable
+```
+
 The build output is configured to write to:
 
 ```text
@@ -125,6 +140,12 @@ The installer package is:
 
 ```text
 C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Setup.exe
+```
+
+The one-file standalone executable is:
+
+```text
+C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Standalone.exe
 ```
 
 For online update checks to work from the installed app, publish a GitHub Release and upload the installer asset. If electron-builder generates update metadata such as `latest.yml` or `.blockmap` files, upload those assets to the same release too.

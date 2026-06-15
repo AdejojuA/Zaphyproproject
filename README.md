@@ -25,6 +25,14 @@ Standalone download link for your product/download page:
 </a>
 ```
 
+Clear standalone filename:
+
+```html
+<a href="https://github.com/AdejojuA/Zaphyproproject/releases/latest/download/ZahpyBusinessPro-Standalone.zip">
+  Download Zahpy Business Pro Standalone
+</a>
+```
+
 Installer download link for your product/download page:
 
 ```html
@@ -105,6 +113,12 @@ The downloadable package is:
 
 ```text
 C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Windows.zip
+```
+
+The same standalone zip is also copied to a clearer filename:
+
+```text
+C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Standalone.zip
 ```
 
 The installer package is:

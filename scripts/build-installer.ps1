@@ -389,10 +389,13 @@ public static class ZahpySetup
             terms.ScrollBars = ScrollBars.Vertical;
             terms.BorderStyle = BorderStyle.FixedSingle;
             terms.BackColor = light;
+            terms.Cursor = Cursors.Arrow;
             terms.ForeColor = Color.FromArgb(30, 41, 59);
             terms.Font = new Font("Segoe UI", 9.75F);
+            terms.HideSelection = true;
             terms.Location = new Point(30, 350);
             terms.Size = new Size(660, 198);
+            terms.TabStop = false;
             terms.Text =
                 "Zahpy Business Pro Desktop Setup" + Environment.NewLine + Environment.NewLine +
                 "This installer copies Zahpy Business Pro to the current user's local Programs folder, creates Desktop and Start Menu shortcuts, registers an uninstall entry, and launches the desktop app after installation." + Environment.NewLine + Environment.NewLine +
@@ -467,6 +470,13 @@ public static class ZahpySetup
 
             AcceptButton = install;
             CancelButton = cancel;
+
+            Shown += delegate
+            {
+                terms.SelectionStart = 0;
+                terms.SelectionLength = 0;
+                ActiveControl = agree;
+            };
         }
     }
 

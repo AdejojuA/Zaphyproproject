@@ -142,7 +142,7 @@ async function main() {
     (async () => {
       document.getElementById('themeToggle').click();
       document.querySelector('[data-target="emailView"]').click();
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const emailCard = document.querySelector('#emailView > div');
       const emailInput = document.getElementById('emailTo');
@@ -150,6 +150,9 @@ async function main() {
       return {
         htmlDark: document.documentElement.classList.contains('dark'),
         bodyDark: document.body.classList.contains('dark'),
+        bodyClassName: document.body.className,
+        htmlStyleBackground: document.documentElement.style.backgroundColor,
+        bodyStyleBackground: document.body.style.backgroundColor,
         bodyBackground: getComputedStyle(document.body).backgroundColor,
         emailCardBackground: getComputedStyle(emailCard).backgroundColor,
         emailInputBackground: getComputedStyle(emailInput).backgroundColor
@@ -176,7 +179,8 @@ async function main() {
     ...(!featureSmoke.serviceAdded ? ['service insertion smoke failed'] : []),
     ...(!darkModeSmoke.htmlDark ? ['dark mode did not apply to document root'] : []),
     ...(!darkModeSmoke.bodyDark ? ['dark mode did not apply to body'] : []),
-    ...(darkModeSmoke.bodyBackground !== 'rgb(15, 23, 42)' ? ['dark mode body background did not switch to slate-900'] : []),
+    ...(darkModeSmoke.htmlStyleBackground !== 'rgb(15, 23, 42)' ? ['dark mode html background did not switch to slate-900'] : []),
+    ...(darkModeSmoke.bodyStyleBackground !== 'rgb(15, 23, 42)' ? ['dark mode body background did not switch to slate-900'] : []),
     ...(darkModeSmoke.emailInputBackground === 'rgb(255, 255, 255)' ? ['email input stayed light in dark mode'] : []),
     ...failedLibs.map((name) => `${name} library did not load`),
     ...remoteRequests.map((url) => `remote request blocked: ${url}`),

@@ -1133,6 +1133,10 @@
             document.documentElement.classList.toggle('dark', isDark);
             document.documentElement.classList.toggle('light', !isDark);
             document.body.classList.toggle('dark', isDark);
+            document.body.classList.toggle('bg-slate-900', isDark);
+            document.body.classList.toggle('bg-slate-200', !isDark);
+            document.documentElement.style.backgroundColor = isDark ? '#0f172a' : '#e2e8f0';
+            document.body.style.backgroundColor = isDark ? '#0f172a' : '#e2e8f0';
             document.getElementById('metaThemeColor').setAttribute('content', isDark ? '#0f172a' : '#e2e8f0');
             return isDark;
         }

@@ -138,6 +138,25 @@ async function main() {
     })()
   `);
 
+  const darkModeSmoke = await window.webContents.executeJavaScript(`
+    (async () => {
+      document.getElementById('themeToggle').click();
+      document.querySelector('[data-target="emailView"]').click();
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const emailCard = document.querySelector('#emailView > div');
+      const emailInput = document.getElementById('emailTo');
+
+      return {
+        htmlDark: document.documentElement.classList.contains('dark'),
+        bodyDark: document.body.classList.contains('dark'),
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+        emailCardBackground: getComputedStyle(emailCard).backgroundColor,
+        emailInputBackground: getComputedStyle(emailInput).backgroundColor
+      };
+    })()
+  `);
+
   const failedLibs = Object.entries(result.libs)
     .filter(([, value]) => value !== 'function' && value !== 'object')
     .map(([key]) => key);
@@ -155,13 +174,17 @@ async function main() {
     ...(featureSmoke.payments < 1 ? ['payment tracking smoke failed'] : []),
     ...(featureSmoke.invoiceStatus !== 'Partial Paid' ? ['payment status smoke failed'] : []),
     ...(!featureSmoke.serviceAdded ? ['service insertion smoke failed'] : []),
+    ...(!darkModeSmoke.htmlDark ? ['dark mode did not apply to document root'] : []),
+    ...(!darkModeSmoke.bodyDark ? ['dark mode did not apply to body'] : []),
+    ...(darkModeSmoke.bodyBackground !== 'rgb(15, 23, 42)' ? ['dark mode body background did not switch to slate-900'] : []),
+    ...(darkModeSmoke.emailInputBackground === 'rgb(255, 255, 255)' ? ['email input stayed light in dark mode'] : []),
     ...failedLibs.map((name) => `${name} library did not load`),
     ...remoteRequests.map((url) => `remote request blocked: ${url}`),
     ...loadFailures.map((failure) => `load failure ${failure.errorCode}: ${failure.validatedURL}`),
     ...consoleErrors.map((error) => `console error: ${error.message}`)
   ];
 
-  console.log(JSON.stringify({ ...result, featureSmoke, remoteRequests, loadFailures, consoleErrors }, null, 2));
+  console.log(JSON.stringify({ ...result, featureSmoke, darkModeSmoke, remoteRequests, loadFailures, consoleErrors }, null, 2));
 
   if (failures.length > 0) {
     console.error(failures.join('\n'));

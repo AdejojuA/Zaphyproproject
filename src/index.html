@@ -8,6 +8,16 @@
     <meta name="apple-mobile-web-app-title" content="Zahpy Pro">
     <title>Zahpy Business Pro — Professional Invoicing</title>
     
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem('zahpy_theme') || 'light';
+                document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+                document.documentElement.classList.toggle('light', savedTheme !== 'dark');
+            } catch (_) {
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="./vendor/fonts/fonts.css">
     <link rel="stylesheet" href="./vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="./vendor/tailwind.css">
@@ -23,12 +33,37 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .dark ::-webkit-scrollbar-thumb { background: #334155; }
         
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            text-rendering: optimizeLegibility;
+        }
+
+        html.light body {
+            background-color: #e2e8f0;
+        }
+
+        html.dark body,
+        body.dark {
+            background-color: #0f172a;
+        }
         
         /* Premium Card Elevation */
         .panel-deck {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 14px 34px -28px rgba(15, 23, 42, 0.45), 0 1px 2px rgba(15, 23, 42, 0.04);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .dark .panel-deck {
+            box-shadow: 0 18px 42px -30px rgba(2, 6, 23, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+        }
+
+        .panel-deck:hover {
+            box-shadow: 0 18px 42px -30px rgba(15, 23, 42, 0.58), 0 1px 2px rgba(15, 23, 42, 0.05);
+        }
+
+        .dark .panel-deck:hover {
+            box-shadow: 0 22px 48px -32px rgba(2, 6, 23, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
         
         /* Print Styles */
@@ -49,6 +84,33 @@
             outline: none;
             border-color: #0ea5e9 !important;
             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1) !important;
+        }
+
+        input, select, textarea, button {
+            transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        input[type="date"] {
+            color-scheme: light;
+        }
+
+        .dark input[type="date"] {
+            color-scheme: dark;
+        }
+
+        .dark input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(1) brightness(1.55) saturate(0.8);
+            opacity: 0.78;
+        }
+
+        .dark input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        .dark input::placeholder,
+        .dark textarea::placeholder {
+            color: #64748b;
         }
         
         /* Sticky preview panel container */
@@ -585,27 +647,30 @@
         </div>
 
         <!-- ================= EMAIL VIEW ================= -->
-        <div id="emailView" class="view-section hidden max-w-4xl mx-auto space-y-4">
-            <h2 class="text-xl font-bold inline-block text-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:px-3 dark:py-1 dark:rounded-md transition-all mb-4 ui-str" data-key="tabEmail">Email Assistant</h2>
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-[600px]">
-                <div class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 p-4 flex flex-wrap gap-4 items-center">
+        <div id="emailView" class="view-section hidden max-w-4xl mx-auto space-y-5">
+            <h2 class="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 transition-all mb-2 flex items-center gap-2">
+                <i class="fas fa-paper-plane text-brand-500 text-base"></i>
+                <span class="ui-str" data-key="tabEmail">Email Assistant</span>
+            </h2>
+            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700/80 overflow-hidden flex flex-col h-[600px]">
+                <div class="bg-slate-50 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-700 p-4 flex flex-wrap gap-4 items-center">
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Send To</label>
-                        <input id="emailTo" type="email" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm" placeholder="client@example.com">
+                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Send To</label>
+                        <input id="emailTo" type="email" class="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 rounded-lg p-2 text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500" placeholder="client@example.com">
                     </div>
                     <div class="w-64">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1"><i class="fas fa-magic text-brand-500 mr-1"></i> AI Tone / Template</label>
-                        <select id="emailTemplateSelect" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm font-medium text-slate-700 dark:text-slate-200"></select>
+                        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1"><i class="fas fa-wand-magic-sparkles text-brand-500 mr-1"></i> Tone / Template</label>
+                        <select id="emailTemplateSelect" class="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm font-semibold text-slate-700 dark:text-slate-100"></select>
                     </div>
                 </div>
-                <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-slate-900/50">
-                    <textarea id="emailPreviewBox" class="w-full h-full resize-none outline-none text-sm font-mono text-slate-700 dark:text-slate-300 bg-transparent leading-relaxed" spellcheck="false"></textarea>
+                <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-slate-950/80">
+                    <textarea id="emailPreviewBox" class="w-full h-full resize-none outline-none text-sm font-mono text-slate-700 dark:text-slate-100 bg-transparent leading-relaxed" spellcheck="false"></textarea>
                 </div>
-                <div class="bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-4 flex gap-3 justify-end flex-wrap">
-                    <button id="copyEmailBtn" class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">Copy Text</button>
-                    <button id="yahooBtn" class="px-4 py-2 bg-[#6001D2] text-white rounded-lg text-sm font-semibold hover:bg-[#4a00a0] transition-colors"><i class="fab fa-yahoo mr-1"></i> Yahoo</button>
-                    <button id="outlookBtn" class="px-4 py-2 bg-[#0078D4] text-white rounded-lg text-sm font-semibold hover:bg-[#005a9e] transition-colors"><i class="fab fa-microsoft mr-1"></i> Outlook</button>
-                    <button id="gmailBtn" class="px-4 py-2 bg-[#EA4335] text-white rounded-lg text-sm font-semibold hover:bg-[#D93025] transition-colors"><i class="fab fa-google mr-1"></i> Gmail</button>
+                <div class="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 p-4 flex gap-3 justify-end flex-wrap">
+                    <button id="copyEmailBtn" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Copy Text</button>
+                    <button id="yahooBtn" class="px-4 py-2 bg-[#6001D2] text-white rounded-lg text-sm font-bold hover:bg-[#4a00a0] transition-colors shadow-sm"><i class="fab fa-yahoo mr-1"></i> Yahoo</button>
+                    <button id="outlookBtn" class="px-4 py-2 bg-[#0078D4] text-white rounded-lg text-sm font-bold hover:bg-[#005a9e] transition-colors shadow-sm"><i class="fab fa-microsoft mr-1"></i> Outlook</button>
+                    <button id="gmailBtn" class="px-4 py-2 bg-[#EA4335] text-white rounded-lg text-sm font-bold hover:bg-[#D93025] transition-colors shadow-sm"><i class="fab fa-google mr-1"></i> Gmail</button>
                 </div>
             </div>
         </div>
@@ -1063,6 +1128,14 @@
         function eAttr(str) { return eHTML(str).replace(/"/g, '&quot;'); }
         function getEl(id) { return document.getElementById(id); }
         function setValue(id, value) { const el = getEl(id); if (el) el.value = value ?? ''; }
+        function setThemeMode(mode) {
+            const isDark = mode === 'dark';
+            document.documentElement.classList.toggle('dark', isDark);
+            document.documentElement.classList.toggle('light', !isDark);
+            document.body.classList.toggle('dark', isDark);
+            document.getElementById('metaThemeColor').setAttribute('content', isDark ? '#0f172a' : '#e2e8f0');
+            return isDark;
+        }
         function getNumeric(value) { return parseFloat(value) || 0; }
         function todayISO() { return new Date().toISOString().split('T')[0]; }
         function addDaysISO(days) { return new Date(Date.now() + (parseInt(days, 10) || 0) * 86400000).toISOString().split('T')[0]; }
@@ -2190,7 +2263,7 @@
             document.getElementById('paymentDateInput').value = today;
 
             const savedTheme = localStorage.getItem('zahpy_theme') || 'light';
-            if(savedTheme === 'dark') { document.body.classList.add('dark'); document.getElementById('metaThemeColor').setAttribute('content','#0b1120'); }
+            setThemeMode(savedTheme);
 
             // BOOT SECURITY CHECK
             updateSecurityUI();
@@ -2335,10 +2408,8 @@
 
             // Theme
             document.getElementById('themeToggle').addEventListener('click', () => {
-                document.body.classList.toggle('dark');
-                const isDark = document.body.classList.contains('dark');
+                const isDark = setThemeMode(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
                 localStorage.setItem('zahpy_theme', isDark ? 'dark' : 'light');
-                document.getElementById('metaThemeColor').setAttribute('content', isDark ? '#0f172a' : '#e2e8f0');
                 if(!document.getElementById('dashboardView').classList.contains('hidden')) updateDashboard();
             });
 
@@ -2358,7 +2429,7 @@
 
             // Tools
             document.getElementById('burnerModeBtn').addEventListener('click', () => {
-                openConfirm('Erase All Data?', 'This will permanently delete all invoices, settings, and history from your browser.', 'Burn Data', 'bg-rose-600 hover:bg-rose-700', 'fa-fire', false, () => {
+                openConfirm('Erase All Data?', 'This will permanently delete invoices, settings, and history from your local workspace.', 'Burn Data', 'bg-rose-600 hover:bg-rose-700', 'fa-fire', false, () => {
                     localStorage.clear();
                     location.reload();
                 });

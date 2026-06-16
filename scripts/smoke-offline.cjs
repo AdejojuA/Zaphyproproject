@@ -160,6 +160,38 @@ async function main() {
     })()
   `);
 
+  const datePickerSmoke = await window.webContents.executeJavaScript(`
+    (() => {
+      const ids = ['docDate', 'dueDate', 'sigDate', 'paymentDateInput'];
+      const calls = {};
+      const ready = {};
+      const values = {};
+
+      ids.forEach((id) => {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        calls[id] = 0;
+        ready[id] = input.dataset.datePickerReady;
+        values[id] = input.value;
+        input.showPicker = () => {
+          calls[id] += 1;
+        };
+
+        input.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+      });
+
+      return {
+        ids,
+        found: ids.filter((id) => !!document.getElementById(id)),
+        ready,
+        calls,
+        values
+      };
+    })()
+  `);
+
   const failedLibs = Object.entries(result.libs)
     .filter(([, value]) => value !== 'function' && value !== 'object')
     .map(([key]) => key);
@@ -182,13 +214,20 @@ async function main() {
     ...(darkModeSmoke.htmlStyleBackground !== 'rgb(15, 23, 42)' ? ['dark mode html background did not switch to slate-900'] : []),
     ...(darkModeSmoke.bodyStyleBackground !== 'rgb(15, 23, 42)' ? ['dark mode body background did not switch to slate-900'] : []),
     ...(darkModeSmoke.emailInputBackground === 'rgb(255, 255, 255)' ? ['email input stayed light in dark mode'] : []),
+    ...(datePickerSmoke.found.length !== datePickerSmoke.ids.length ? ['date picker fields missing'] : []),
+    ...datePickerSmoke.ids
+      .filter((id) => datePickerSmoke.ready[id] !== 'true')
+      .map((id) => `date picker not initialized: ${id}`),
+    ...datePickerSmoke.ids
+      .filter((id) => (datePickerSmoke.calls[id] || 0) < 2)
+      .map((id) => `date picker activation failed: ${id}`),
     ...failedLibs.map((name) => `${name} library did not load`),
     ...remoteRequests.map((url) => `remote request blocked: ${url}`),
     ...loadFailures.map((failure) => `load failure ${failure.errorCode}: ${failure.validatedURL}`),
     ...consoleErrors.map((error) => `console error: ${error.message}`)
   ];
 
-  console.log(JSON.stringify({ ...result, featureSmoke, darkModeSmoke, remoteRequests, loadFailures, consoleErrors }, null, 2));
+  console.log(JSON.stringify({ ...result, featureSmoke, darkModeSmoke, datePickerSmoke, remoteRequests, loadFailures, consoleErrors }, null, 2));
 
   if (failures.length > 0) {
     console.error(failures.join('\n'));

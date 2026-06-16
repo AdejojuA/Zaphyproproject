@@ -8,13 +8,14 @@
   "private": true,
   "scripts": {
     "build:css": "tailwindcss -c tailwind.config.js -i ./src/styles/tailwind.input.css -o ./src/vendor/tailwind.css --minify",
+    "copy:html": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/copy-html-output.ps1",
     "start": "npm run build:css && electron .",
     "smoke:offline": "npm run build:css && electron ./scripts/smoke-offline.cjs",
     "dist": "npm run dist:standalone",
-    "dist:standalone": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-standalone.ps1",
-    "dist:installer": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-installer.ps1",
-    "dist:installer:nsis": "npm run build:css && electron-builder --win nsis --x64 --publish never --config.electronDist=node_modules/electron/dist",
-    "dist:portable": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-portable.ps1"
+    "dist:standalone": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-standalone.ps1 && npm run copy:html",
+    "dist:installer": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-installer.ps1 && npm run copy:html",
+    "dist:installer:nsis": "npm run build:css && electron-builder --win nsis --x64 --publish never --config.electronDist=node_modules/electron/dist && npm run copy:html",
+    "dist:portable": "npm run build:css && electron-builder --win dir --x64 --config.electronDist=node_modules/electron/dist && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-portable.ps1 && npm run copy:html"
   },
   "devDependencies": {
     "@fontsource/caveat": "^5.2.8",

@@ -148,4 +148,11 @@ The one-file standalone executable is:
 C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro-Standalone.exe
 ```
 
+The desktop source HTML copy is also written beside the release files. Its local CSS and script assets are copied to the `vendor` folder next to it.
+
+```text
+C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\ZahpyBusinessPro_html.html
+C:\Users\akere\Documents\Codex\2026-05-30\files-mentioned-by-the-user-zahpybusinesspro\outputs\vendor
+```
+
 For online update checks to work from the installed app, publish a GitHub Release and upload the installer asset. If electron-builder generates update metadata such as `latest.yml` or `.blockmap` files, upload those assets to the same release too.

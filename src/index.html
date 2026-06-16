@@ -40,12 +40,12 @@
         }
 
         html.light body {
-            background-color: #e2e8f0;
+            background-color: #e2e8f0 !important;
         }
 
         html.dark body,
         body.dark {
-            background-color: #0f172a;
+            background-color: #0f172a !important;
         }
         
         /* Premium Card Elevation */
@@ -1139,20 +1139,21 @@
 
         // --- Core UI Functions ---
         function getT() { return i18n[currentLang] || i18n['en']; }
-        function eHTML(str) { return (str||'').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+        function eHTML(str) { return String(str ?? '').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
         function eAttr(str) { return eHTML(str).replace(/"/g, '&quot;'); }
         function getEl(id) { return document.getElementById(id); }
         function setValue(id, value) { const el = getEl(id); if (el) el.value = value ?? ''; }
         function setThemeMode(mode) {
             const isDark = mode === 'dark';
+            const backgroundColor = isDark ? '#0f172a' : '#e2e8f0';
             document.documentElement.classList.toggle('dark', isDark);
             document.documentElement.classList.toggle('light', !isDark);
             document.body.classList.toggle('dark', isDark);
             document.body.classList.toggle('bg-slate-900', isDark);
             document.body.classList.toggle('bg-slate-200', !isDark);
-            document.documentElement.style.backgroundColor = isDark ? '#0f172a' : '#e2e8f0';
-            document.body.style.backgroundColor = isDark ? '#0f172a' : '#e2e8f0';
-            document.getElementById('metaThemeColor').setAttribute('content', isDark ? '#0f172a' : '#e2e8f0');
+            document.documentElement.style.setProperty('background-color', backgroundColor, 'important');
+            document.body.style.setProperty('background-color', backgroundColor, 'important');
+            document.getElementById('metaThemeColor').setAttribute('content', backgroundColor);
             return isDark;
         }
         function getNumeric(value) { return parseFloat(value) || 0; }
@@ -1204,7 +1205,11 @@
             const c = document.getElementById('toastContainer');
             const t = document.createElement('div');
             t.className = `toast-enter flex items-center gap-3 px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-sm pointer-events-auto backdrop-blur-md border border-white/20 ${type==='error'?'bg-rose-600/90':'bg-emerald-600/90'}`;
-            t.innerHTML = `<i class="fas ${type==='error'?'fa-exclamation-circle':'fa-check-circle'}"></i> <span>${msg}</span>`;
+            const icon = document.createElement('i');
+            icon.className = `fas ${type==='error'?'fa-exclamation-circle':'fa-check-circle'}`;
+            const message = document.createElement('span');
+            message.textContent = msg;
+            t.append(icon, message);
             c.appendChild(t);
             setTimeout(() => { t.classList.replace('toast-enter', 'toast-exit'); setTimeout(()=>t.remove(), 300); }, 3000);
         }
@@ -1453,7 +1458,7 @@
             select.innerHTML = '<option value="">Select saved client...</option>' + clients
                 .slice()
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .map(client => `<option value="${client.id}">${eHTML(client.name)}${client.email ? ' — ' + eHTML(client.email) : ''}</option>`)
+                .map(client => `<option value="${eAttr(client.id)}">${eHTML(client.name)}${client.email ? ' — ' + eHTML(client.email) : ''}</option>`)
                 .join('');
             if (clients.some(client => client.id === current)) select.value = current;
         }
@@ -1507,9 +1512,9 @@
                             ${client.address ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${eHTML(client.address)}</p>` : ''}
                         </div>
                         <div class="flex gap-2 h-fit">
-                            <button class="use-client px-2 py-1 bg-brand-100 text-brand-700 rounded text-xs font-bold" data-id="${client.id}">Use</button>
-                            <button class="edit-client px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-bold" data-id="${client.id}">Edit</button>
-                            <button class="delete-client px-2 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold" data-id="${client.id}">Del</button>
+                            <button class="use-client px-2 py-1 bg-brand-100 text-brand-700 rounded text-xs font-bold" data-id="${eAttr(client.id)}">Use</button>
+                            <button class="edit-client px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-bold" data-id="${eAttr(client.id)}">Edit</button>
+                            <button class="delete-client px-2 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold" data-id="${eAttr(client.id)}">Del</button>
                         </div>
                     </div>
                 </div>
@@ -1576,7 +1581,7 @@
             select.innerHTML = '<option value="">Add saved service...</option>' + serviceCatalog
                 .slice()
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .map(service => `<option value="${service.id}">${eHTML(service.name)} — ${businessSettings.docCurrency}${getNumeric(service.price).toFixed(2)}</option>`)
+                .map(service => `<option value="${eAttr(service.id)}">${eHTML(service.name)} — ${eHTML(businessSettings.docCurrency)}${getNumeric(service.price).toFixed(2)}</option>`)
                 .join('');
             if (serviceCatalog.some(service => service.id === current)) select.value = current;
         }
@@ -1593,13 +1598,13 @@
                     <div class="flex justify-between gap-3">
                         <div>
                             <p class="font-bold text-sm text-slate-800 dark:text-white">${eHTML(service.name)}</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">${eHTML(service.unit)} &middot; ${businessSettings.docCurrency}${getNumeric(service.price).toFixed(2)} ${service.sku ? '&middot; ' + eHTML(service.sku) : ''}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${eHTML(service.unit)} &middot; ${eHTML(businessSettings.docCurrency)}${getNumeric(service.price).toFixed(2)} ${service.sku ? '&middot; ' + eHTML(service.sku) : ''}</p>
                             ${service.description ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${eHTML(service.description)}</p>` : ''}
                         </div>
                         <div class="flex gap-2 h-fit">
-                            <button class="use-service px-2 py-1 bg-brand-100 text-brand-700 rounded text-xs font-bold" data-id="${service.id}">Add</button>
-                            <button class="edit-service px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-bold" data-id="${service.id}">Edit</button>
-                            <button class="delete-service px-2 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold" data-id="${service.id}">Del</button>
+                            <button class="use-service px-2 py-1 bg-brand-100 text-brand-700 rounded text-xs font-bold" data-id="${eAttr(service.id)}">Add</button>
+                            <button class="edit-service px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-bold" data-id="${eAttr(service.id)}">Edit</button>
+                            <button class="delete-service px-2 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold" data-id="${eAttr(service.id)}">Del</button>
                         </div>
                     </div>
                 </div>
@@ -1704,7 +1709,7 @@
             if (!select) return;
             const current = select.value;
             select.innerHTML = '<option value="">Select invoice...</option>' + historyInvoices.map(invoice => `
-                <option value="${invoice.id}">#${eHTML(invoice.docNumber)} — ${eHTML(invoice.clientName)} — Balance ${invoice.docCurrency}${getNumeric(invoice.balanceDue).toFixed(2)}</option>
+                <option value="${eAttr(invoice.id)}">#${eHTML(invoice.docNumber)} — ${eHTML(invoice.clientName)} — Balance ${eHTML(invoice.docCurrency)}${getNumeric(invoice.balanceDue).toFixed(2)}</option>
             `).join('');
             if (historyInvoices.some(invoice => String(invoice.id) === current)) select.value = current;
         }
@@ -1949,10 +1954,10 @@
                 <div class="grid grid-cols-12 gap-4 py-3 border-b border-slate-100 last:border-0 items-center">
                     <div class="col-span-7">
                         <p class="text-[13px] font-bold text-slate-800">${eHTML(i.name)}</p>
-                        <p class="text-[11px] text-slate-500 mt-0.5">${i.qty} ${data.unitLabel} × ${data.docCurrency}${i.price.toFixed(2)}</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">${i.qty} ${eHTML(data.unitLabel)} × ${eHTML(data.docCurrency)}${i.price.toFixed(2)}</p>
                     </div>
                     <div class="col-span-5 text-right font-medium text-[13px] text-slate-800 font-mono">
-                        ${data.docCurrency}${(i.qty*i.price).toFixed(2)}
+                        ${eHTML(data.docCurrency)}${(i.qty*i.price).toFixed(2)}
                     </div>
                 </div>
             `).join('');
@@ -1980,14 +1985,14 @@
             }
             if(!data.paypalUser && !data.stripeLink) paymentLinksHtml = `<p class="text-[10px] italic text-slate-400">${t.noPay}</p>`;
 
-            let logoHtml = savedLogo ? `<img src="${savedLogo}" class="max-h-16 mb-4 object-contain">` : '';
+            let logoHtml = savedLogo ? `<img src="${eAttr(savedLogo)}" class="max-h-16 mb-4 object-contain">` : '';
             // Signature size increased by approximately 15% - changed from text-xl (~20px) to text-2xl (~24px)
             let sigHtml = data.sigName ? `<div class="font-signature text-2xl text-slate-800 absolute bottom-3">${eHTML(data.sigName)}</div>` : '';
 
             // Smart Badge Logic
             let statusHtml = '';
             if (['Partial Paid', 'Paid', 'Overdue'].includes(data.docStatus)) {
-                statusHtml = `<div class="mt-2"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${stColor}">${data.docStatus}</span></div>`;
+                statusHtml = `<div class="mt-2"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${stColor}">${eHTML(data.docStatus)}</span></div>`;
             }
             const businessContactHtml = [data.businessEmail, data.businessPhone, data.businessAddress]
                 .filter(Boolean)
@@ -2009,7 +2014,7 @@
                     </div>
                     <div class="text-right">
                         <div class="inline-block bg-slate-900 text-white px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase mb-3 shadow-sm">${t[data.docType==='INVOICE'?'invoice':'estimate']}</div>
-                        <p class="text-slate-500 text-xs font-semibold">#${eHTML(data.docNumber)} &middot; ${data.docDate}</p>
+                        <p class="text-slate-500 text-xs font-semibold">#${eHTML(data.docNumber)} &middot; ${eHTML(data.docDate)}</p>
                         ${statusHtml}
                     </div>
                 </div>
@@ -2032,35 +2037,35 @@
                     <div class="w-full max-w-[280px] text-[13px]">
                         <div class="flex justify-between py-1.5 text-slate-600">
                             <span>${t.sub}</span>
-                            <span class="font-medium text-slate-800 font-mono">${data.docCurrency}${data.subtotal.toFixed(2)}</span>
+                            <span class="font-medium text-slate-800 font-mono">${eHTML(data.docCurrency)}${data.subtotal.toFixed(2)}</span>
                         </div>
                         ${parseFloat(data.taxRate) > 0 ? `
                         <div class="flex justify-between py-1.5 text-slate-600">
-                            <span>${t.tax} (${data.taxRate}%)</span>
-                            <span class="font-medium text-slate-800 font-mono">${data.docCurrency}${data.taxAmt.toFixed(2)}</span>
+                            <span>${t.tax} (${eHTML(data.taxRate)}%)</span>
+                            <span class="font-medium text-slate-800 font-mono">${eHTML(data.docCurrency)}${data.taxAmt.toFixed(2)}</span>
                         </div>` : ''}
                         ${parseFloat(data.discountAmount) > 0 ? `
                         <div class="flex justify-between py-1.5 text-emerald-600">
                             <span>${t.disc}</span>
-                            <span class="font-medium font-mono">-${data.docCurrency}${parseFloat(data.discountAmount).toFixed(2)}</span>
+                            <span class="font-medium font-mono">-${eHTML(data.docCurrency)}${parseFloat(data.discountAmount).toFixed(2)}</span>
                         </div>` : ''}
                         ${data.lateAmt > 0 ? `
                         <div class="flex justify-between py-1.5 text-rose-600">
-                            <span>${t.late} (${data.lateFee}%)</span>
-                            <span class="font-medium font-mono">${data.docCurrency}${data.lateAmt.toFixed(2)}</span>
+                            <span>${t.late} (${eHTML(data.lateFee)}%)</span>
+                            <span class="font-medium font-mono">${eHTML(data.docCurrency)}${data.lateAmt.toFixed(2)}</span>
                         </div>` : ''}
                         <div class="flex justify-between items-center py-4 mt-2 border-t-2 border-slate-800">
                             <span class="font-black text-slate-800 uppercase tracking-wider">${t.total}</span>
-                            <span class="text-xl font-black tracking-tight text-slate-900 font-mono">${data.docCurrency}${data.finalTotal.toFixed(2)}</span>
+                            <span class="text-xl font-black tracking-tight text-slate-900 font-mono">${eHTML(data.docCurrency)}${data.finalTotal.toFixed(2)}</span>
                         </div>
                         ${data.paidAmount > 0 ? `
                         <div class="flex justify-between py-1.5 text-emerald-600">
                             <span>Paid</span>
-                            <span class="font-medium font-mono">${data.docCurrency}${data.paidAmount.toFixed(2)}</span>
+                            <span class="font-medium font-mono">${eHTML(data.docCurrency)}${data.paidAmount.toFixed(2)}</span>
                         </div>
                         <div class="flex justify-between py-1.5 text-amber-600">
                             <span>Balance</span>
-                            <span class="font-bold font-mono">${data.docCurrency}${data.balanceDue.toFixed(2)}</span>
+                            <span class="font-bold font-mono">${eHTML(data.docCurrency)}${data.balanceDue.toFixed(2)}</span>
                         </div>` : ''}
                     </div>
                 </div>
@@ -2120,23 +2125,23 @@
                 <div class="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 uppercase">${h.docType}</span>
-                            <span class="text-xs font-bold px-2 py-0.5 rounded-full ${h.docStatus === 'Paid' ? 'bg-emerald-100 text-emerald-700' : h.docStatus === 'Partial Paid' ? 'bg-amber-100 text-amber-700' : h.docStatus === 'Overdue' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'}">${h.docStatus}</span>
-                            <span class="text-sm font-bold text-slate-800 dark:text-white">#${h.docNumber}</span>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 uppercase">${eHTML(h.docType)}</span>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-full ${h.docStatus === 'Paid' ? 'bg-emerald-100 text-emerald-700' : h.docStatus === 'Partial Paid' ? 'bg-amber-100 text-amber-700' : h.docStatus === 'Overdue' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'}">${eHTML(h.docStatus)}</span>
+                            <span class="text-sm font-bold text-slate-800 dark:text-white">#${eHTML(h.docNumber)}</span>
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">${h.clientName} &middot; ${h.docDate} &middot; Total ${h.docCurrency}${getNumeric(h.finalTotal).toFixed(2)} &middot; Paid ${h.docCurrency}${getNumeric(h.paidAmount).toFixed(2)} &middot; Balance ${h.docCurrency}${getNumeric(h.balanceDue).toFixed(2)}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${eHTML(h.clientName)} &middot; ${eHTML(h.docDate)} &middot; Total ${eHTML(h.docCurrency)}${getNumeric(h.finalTotal).toFixed(2)} &middot; Paid ${eHTML(h.docCurrency)}${getNumeric(h.paidAmount).toFixed(2)} &middot; Balance ${eHTML(h.docCurrency)}${getNumeric(h.balanceDue).toFixed(2)}</p>
                     </div>
                     <div class="flex gap-2">
-                        <button class="pay-hist px-3 py-1.5 bg-brand-100 text-brand-700 rounded text-xs font-semibold hover:bg-brand-200 transition-colors" data-id="${h.id}">Payment</button>
-                        <button class="load-hist px-3 py-1.5 bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded text-xs font-semibold dark:text-white hover:text-brand-600 dark:hover:bg-slate-500 transition-colors" data-id="${h.id}">Load</button>
-                        <button class="del-hist px-3 py-1.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors" data-id="${h.id}">Del</button>
+                        <button class="pay-hist px-3 py-1.5 bg-brand-100 text-brand-700 rounded text-xs font-semibold hover:bg-brand-200 transition-colors" data-id="${eAttr(h.id)}">Payment</button>
+                        <button class="load-hist px-3 py-1.5 bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded text-xs font-semibold dark:text-white hover:text-brand-600 dark:hover:bg-slate-500 transition-colors" data-id="${eAttr(h.id)}">Load</button>
+                        <button class="del-hist px-3 py-1.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-colors" data-id="${eAttr(h.id)}">Del</button>
                     </div>
                 </div>
             `).join('');
             
             document.querySelectorAll('.load-hist').forEach(b => b.addEventListener('click', e => {
-                const id = parseInt(b.getAttribute('data-id'));
-                const h = historyInvoices.find(x => x.id === id);
+                const id = b.getAttribute('data-id');
+                const h = historyInvoices.find(x => String(x.id) === String(id));
                 if(h) {
                     items = JSON.parse(JSON.stringify(h.items));
                     
@@ -2157,9 +2162,9 @@
             }));
             
             document.querySelectorAll('.del-hist').forEach(b => b.addEventListener('click', e => {
-                const id = parseInt(b.getAttribute('data-id'));
+                const id = b.getAttribute('data-id');
                 openConfirm('Delete Document?', 'This invoice will be permanently removed from your local history.', 'Delete', 'bg-rose-600 hover:bg-rose-700', 'fa-trash', false, () => {
-                    historyInvoices = historyInvoices.filter(x => x.id !== id);
+                    historyInvoices = historyInvoices.filter(x => String(x.id) !== String(id));
                     persistWorkspaceData();
                     renderHistoryList();
                     updateDashboard();

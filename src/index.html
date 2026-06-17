@@ -971,7 +971,7 @@
                 <p>&copy; <span id="currentYear"></span> Zahpy Business Pro Edition. All rights reserved.</p>
             </div>
             <div class="text-center sm:text-right flex flex-col sm:items-end justify-center">
-                <button id="termsBtn" class="underline hover:text-white transition-colors font-semibold">Terms & Data Notice</button>
+                <button id="termsBtn" class="underline hover:text-white transition-colors font-semibold">Terms & Conditions</button>
             </div>
         </div>
     </footer>
@@ -985,46 +985,36 @@
         <!-- Terms Modal -->
         <div id="termsModal" class="modal-card bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col hidden shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
             <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-                <h2 class="text-xl font-bold text-slate-800 dark:text-white">Terms & Data Notice</h2>
+                <h2 class="text-xl font-bold text-slate-800 dark:text-white">Terms & Conditions</h2>
             </div>
             <div class="p-6 overflow-y-auto text-slate-600 dark:text-slate-300 text-sm space-y-5">
-                <div id="termsImportantNotice" class="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800/50 font-medium">
-                    <strong>Important Notice:</strong> This browser-based version of Zahpy Business Pro runs in a web browser. Your workspace records are stored in this browser's local storage for this browser profile and page location, not in a Zahpy cloud account. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Back up your workspace regularly.</strong> Clearing browser data, using a private/incognito window, changing browsers, changing devices, moving to a different file/page location, device failure, or restoring an older backup can make saved records unavailable or permanently remove them.
+                <div class="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800/50 font-medium">
+                    <strong>Important Notice:</strong> Zahpy is a completely offline application running inside your browser. We do not use cloud servers. <strong>Zahpy is not responsible for any loss of data.</strong> Clearing your browser cache will permanently erase your invoices if they are not backed up.
                 </div>
                 
                 <div>
-                    <h4 id="termsLocalTitle" class="font-bold text-slate-800 dark:text-white text-base mb-2">1. Browser App & Local Storage</h4>
-                    <p id="termsLocalBody" class="leading-relaxed">This browser-based version runs from an HTML file or browser page. Invoices, estimates, clients, catalog items, payments, business defaults, tax settings, design settings, and app preferences are saved locally by the browser. This storage is tied to the browser, browser profile, and page address or file location. Zahpy Business Pro does not automatically upload, sync, host, or sell those records through a Zahpy cloud service.</p>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">1. Offline-First Architecture & Data Ownership</h4>
+                    <p class="leading-relaxed">Zahpy Pro operates entirely within your web browser. We do not transmit, sync, or store your invoices on any external cloud servers or databases. Your data belongs solely to you and is stored locally on your device.</p>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">2. Documents, Backups & Recordkeeping</h4>
-                    <p class="leading-relaxed mb-3">You are responsible for keeping final business records, editable history, and backup copies. Recommended workflow:</p>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">2. How to Safeguard Your Data</h4>
+                    <p class="leading-relaxed mb-3">Because your data is not backed up to a cloud server, you are responsible for maintaining your own records. To prevent data loss due to device failure, browser updates, or accidental cache clearing, we strongly advise the following workflow:</p>
                     <ul class="space-y-3 ml-1">
-                        <li class="flex items-start gap-3"><i class="fas fa-file-pdf mt-1 text-rose-500 w-4 text-center"></i> <span><strong>Export PDFs:</strong> Keep final PDF copies of invoices and estimates you send to clients.</span></li>
-                        <li class="flex items-start gap-3"><i class="fas fa-save mt-1 text-brand-500 w-4 text-center"></i> <span><strong>Save to History:</strong> Save editable invoices and estimates before closing or updating the app.</span></li>
-                        <li class="flex items-start gap-3"><i class="fas fa-download mt-1 text-emerald-500 w-4 text-center"></i> <span><strong>Backup Workspaces:</strong> Use the History tab's Backup button to export saved invoices, clients, catalog items, payments, business settings, and tax settings.</span></li>
-                        <li class="flex items-start gap-3"><i class="fas fa-upload mt-1 text-slate-500 w-4 text-center"></i> <span><strong>Restore Carefully:</strong> Restoring a backup replaces the current local workspace with the contents of the backup file.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-file-pdf mt-1 text-rose-500 w-4 text-center"></i> <span><strong>Export as PDF:</strong> Always download a final PDF copy of every document you create. Store these in a secure folder on your computer or a personal cloud drive.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-save mt-1 text-brand-500 w-4 text-center"></i> <span><strong>Save to History:</strong> Click "Save to History" to keep an editable version in your browser's local storage for future reference.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-print mt-1 text-slate-500 w-4 text-center"></i> <span><strong>Print Physical Copies:</strong> For critical financial records, print hard copies to maintain in your physical filing systems.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-download mt-1 text-emerald-500 w-4 text-center"></i> <span><strong>Backup Workspaces:</strong> Go to the History tab regularly and use the "Backup" button to download a complete file of your entire Zahpy database.</span></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">3. Accuracy & Professional Responsibility</h4>
-                    <p class="leading-relaxed">Zahpy Business Pro helps prepare invoices, estimates, payment records, email drafts, dashboard summaries, and PDF documents. It is not legal, tax, accounting, financial, or compliance advice. You are responsible for checking document numbers, totals, tax rates, late fees, payment terms, business information, client details, and any filing or recordkeeping requirements before sending or relying on a document.</p>
-                </div>
-
-                <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">4. Internet Features & External Services</h4>
-                    <p id="termsExternalBody" class="leading-relaxed">This browser-based version can run locally after the HTML file and its assets are available, but browser behavior may vary by device and security settings. Email compose buttons, PayPal links, Stripe links, GitHub download links, and other external links require internet access and may open third-party websites or apps. Desktop installer update checks do not apply to the browser-based version. External services are governed by their own terms, fees, privacy policies, availability, and account requirements.</p>
-                </div>
-
-                <div>
-                    <h4 id="termsSecurityTitle" class="font-bold text-slate-800 dark:text-white text-base mb-2">5. Security, PIN Lock & Browser Data</h4>
-                    <p id="termsSecurityBody" class="leading-relaxed">The optional PIN lock protects the local browser workspace, but forgotten PINs cannot be recovered. Keep separate backup files before clearing browser data, changing browsers, moving the HTML file, restoring data, or moving to another device. Browser storage can be affected by browser settings, privacy tools, storage limits, and profile cleanup.</p>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">3. Limitation of Liability</h4>
+                    <p class="leading-relaxed">Zahpy Business Pro and its developers accept no liability for financial loss, lost documents, or data corruption resulting from the use of this software, browser/OS updates, hardware failure, or accidental cache clearance.</p>
                 </div>
             </div>
             <div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-                <button class="modal-close bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-200 dark:text-slate-900 text-white px-6 py-2.5 rounded-lg font-bold transition-colors">I Understand</button>
+                <button class="modal-close bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-slate-200 dark:text-slate-900 text-white px-6 py-2.5 rounded-lg font-bold transition-colors">I Understand and agree</button>
             </div>
         </div>
 
@@ -2303,31 +2293,9 @@
             });
         }
 
-        function applyTermsForRuntime() {
-            const desktopMode = !!window.zahpyDesktop;
-            const notice = getEl('termsImportantNotice');
-            const localTitle = getEl('termsLocalTitle');
-            const localBody = getEl('termsLocalBody');
-            const externalBody = getEl('termsExternalBody');
-            const securityTitle = getEl('termsSecurityTitle');
-            const securityBody = getEl('termsSecurityBody');
-
-            if (!notice || !localTitle || !localBody || !externalBody || !securityTitle || !securityBody || !desktopMode) {
-                return;
-            }
-
-            notice.innerHTML = '<strong>Important Notice:</strong> Zahpy Business Pro is a Windows desktop application for preparing and managing business documents. Your workspace records are stored locally on this device, not in a Zahpy cloud account. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Back up your workspace regularly.</strong> Device failure, uninstalling app data, clearing local storage, or restoring an older backup can permanently remove saved records.';
-            localTitle.textContent = '1. Desktop App & Local Workspace';
-            localBody.textContent = 'The standalone and installer editions run as desktop software on Windows. Invoices, estimates, clients, catalog items, payments, business defaults, tax settings, design settings, and app preferences are saved in the local workspace for the Windows user profile. Zahpy Business Pro does not automatically upload, sync, host, or sell those records through a Zahpy cloud service.';
-            externalBody.textContent = 'The core app can run locally and offline after installation or extraction. Update checks, GitHub download links, email compose buttons, PayPal links, Stripe links, and other external links require internet access and may open third-party websites or apps. Those services are governed by their own terms, fees, privacy policies, availability, and account requirements.';
-            securityTitle.textContent = '5. Security, PIN Lock & Updates';
-            securityBody.textContent = 'The optional PIN lock protects the local workspace on this device, but forgotten PINs cannot be recovered. Keep separate backups before updating, uninstalling, restoring data, or moving to another computer. Installer updates may replace app files, but your local records still depend on the device, Windows user profile, and backup files you maintain.';
-        }
-
         // --- App Initialization & Global Events ---
         function init() {
             document.getElementById('currentYear').textContent = new Date().getFullYear();
-            applyTermsForRuntime();
 
             const today = new Date().toISOString().split('T')[0];
             const nextW = new Date(Date.now()+14*86400000).toISOString().split('T')[0];

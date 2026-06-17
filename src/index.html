@@ -127,6 +127,34 @@
         .dark textarea::placeholder {
             color: #64748b;
         }
+
+        .calculator-result-card {
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .calculator-result-value {
+            display: block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 1.08;
+            letter-spacing: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .calculator-result-subtotal {
+            font-size: clamp(1.55rem, 3.4vw, 2.25rem);
+        }
+
+        .calculator-result-tax {
+            font-size: clamp(1rem, 2.2vw, 1.25rem);
+        }
+
+        .calculator-result-total {
+            font-size: clamp(1.8rem, 4.5vw, 2.75rem);
+        }
         
         /* Sticky preview panel container */
         .preview-sticky-container {
@@ -649,14 +677,14 @@
                 </div>
                 
                 <!-- Receipt panel (WHITE IN DARK MODE FOR VISIBILITY) -->
-                <div class="bg-slate-50 dark:bg-white rounded-2xl p-8 border border-slate-200 dark:border-slate-300 flex flex-col justify-center h-full text-center">
+                <div class="calculator-result-card bg-slate-50 dark:bg-white rounded-2xl p-8 border border-slate-200 dark:border-slate-300 flex flex-col justify-center h-full text-center">
                     <p class="text-slate-500 dark:text-slate-500 font-medium uppercase tracking-wider text-sm mb-2">Subtotal</p>
-                    <div id="calcSub" class="text-4xl font-mono font-bold text-slate-800 dark:text-slate-800 mb-6">$750.00</div>
+                    <div id="calcSub" class="calculator-result-value calculator-result-subtotal font-mono font-bold text-slate-800 dark:text-slate-800 mb-6">$750.00</div>
                     <p class="text-slate-500 dark:text-slate-500 font-medium uppercase tracking-wider text-sm mb-2">Tax</p>
-                    <div id="calcTaxAmt" class="text-xl font-mono font-medium text-slate-600 dark:text-slate-600 mb-8">$60.00</div>
+                    <div id="calcTaxAmt" class="calculator-result-value calculator-result-tax font-mono font-medium text-slate-600 dark:text-slate-600 mb-8">$60.00</div>
                     <div class="w-16 h-1 bg-brand-500 mx-auto rounded-full mb-8"></div>
                     <p class="text-slate-500 dark:text-slate-500 font-black uppercase tracking-widest text-sm mb-2">Total Due</p>
-                    <div id="calcTotal" class="text-5xl font-mono font-black text-brand-600 dark:text-brand-600">$810.00</div>
+                    <div id="calcTotal" class="calculator-result-value calculator-result-total font-mono font-black text-brand-600 dark:text-brand-600">$810.00</div>
                 </div>
             </div>
         </div>
@@ -2479,10 +2507,34 @@
             });
             
             // Calculator Events
+            const calculatorCurrency = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            const formatCalculatorMoney = (value) => {
+                if (!Number.isFinite(value)) {
+                    return value < 0 ? '-$Too large' : '$Too large';
+                }
+                const abs = Math.abs(value);
+                if (abs >= 1e12) {
+                    return `${value < 0 ? '-' : ''}$${abs.toExponential(2).replace('e+', 'e')}`;
+                }
+                return calculatorCurrency.format(value);
+            };
+            const setCalculatorMoney = (id, value) => {
+                const el = document.getElementById(id);
+                const formatted = formatCalculatorMoney(value);
+                el.innerText = formatted;
+                el.title = formatted;
+            };
             const updateCalc = () => {
                 let q=parseFloat(document.getElementById('calcQty').value)||0, r=parseFloat(document.getElementById('calcRate').value)||0, tx=parseFloat(document.getElementById('calcTax').value)||0, ds=parseFloat(document.getElementById('calcDisc').value)||0;
                 let sub=q*r, tAmt=sub*(tx/100), tot=sub+tAmt-ds;
-                document.getElementById('calcSub').innerText=`$${sub.toFixed(2)}`; document.getElementById('calcTaxAmt').innerText=`$${tAmt.toFixed(2)}`; document.getElementById('calcTotal').innerText=`$${tot.toFixed(2)}`;
+                setCalculatorMoney('calcSub', sub);
+                setCalculatorMoney('calcTaxAmt', tAmt);
+                setCalculatorMoney('calcTotal', tot);
             };
             ['calcQty','calcRate','calcTax','calcDisc'].forEach(id => document.getElementById(id).addEventListener('input', updateCalc));
             document.getElementById('applyCalcBtn').addEventListener('click', () => {

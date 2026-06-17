@@ -161,6 +161,55 @@ async function main() {
     })()
   `);
 
+  const calculatorSmoke = await window.webContents.executeJavaScript(`
+    (() => {
+      const set = (id, value) => {
+        const node = document.getElementById(id);
+        node.value = value;
+        node.dispatchEvent(new Event('input', { bubbles: true }));
+        node.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+
+      document.querySelector('[data-target="calcView"]').click();
+      set('calcQty', '10435');
+      set('calcRate', '75345');
+      set('calcTax', '8345');
+      set('calcDisc', '3.453453534535347e92');
+
+      const card = document.querySelector('.calculator-result-card');
+      const values = ['calcSub', 'calcTaxAmt', 'calcTotal'].map((id) => document.getElementById(id));
+      const cardRect = card.getBoundingClientRect();
+      const measurements = values.map((node) => {
+        const rect = node.getBoundingClientRect();
+        return {
+          id: node.id,
+          text: node.innerText,
+          left: rect.left,
+          right: rect.right,
+          cardLeft: cardRect.left,
+          cardRight: cardRect.right
+        };
+      });
+      const styles = Object.fromEntries(values.map((node) => {
+        const style = getComputedStyle(node);
+        return [node.id, {
+          overflowX: style.overflowX,
+          textOverflow: style.textOverflow,
+          whiteSpace: style.whiteSpace
+        }];
+      }));
+
+      return {
+        values: Object.fromEntries(values.map((node) => [node.id, node.innerText])),
+        measurements,
+        styles,
+        withinCard: measurements.every((item) => item.left >= item.cardLeft - 1 && item.right <= item.cardRight + 1),
+        overflowProtected: Object.values(styles).every((style) => style.overflowX === 'hidden' && style.textOverflow === 'ellipsis' && style.whiteSpace === 'nowrap'),
+        compactTotal: document.getElementById('calcTotal').innerText === '-$3.45e92'
+      };
+    })()
+  `);
+
   const datePickerSmoke = await window.webContents.executeJavaScript(`
     (() => {
       const ids = ['docDate', 'dueDate', 'sigDate', 'paymentDateInput'];
@@ -216,6 +265,9 @@ async function main() {
     ...(darkModeSmoke.htmlBackground !== 'rgb(15, 23, 42)' ? ['dark mode computed html background stayed light'] : []),
     ...(darkModeSmoke.bodyStyleBackground !== 'rgb(15, 23, 42)' ? ['dark mode body background did not switch to slate-900'] : []),
     ...(darkModeSmoke.emailInputBackground === 'rgb(255, 255, 255)' ? ['email input stayed light in dark mode'] : []),
+    ...(!calculatorSmoke.withinCard ? ['calculator result text overflowed its card'] : []),
+    ...(!calculatorSmoke.overflowProtected ? ['calculator result overflow protection is not active'] : []),
+    ...(!calculatorSmoke.compactTotal ? ['calculator high total did not use compact scientific format'] : []),
     ...(datePickerSmoke.found.length !== datePickerSmoke.ids.length ? ['date picker fields missing'] : []),
     ...datePickerSmoke.ids
       .filter((id) => datePickerSmoke.ready[id] !== 'true')
@@ -229,7 +281,7 @@ async function main() {
     ...consoleErrors.map((error) => `console error: ${error.message}`)
   ];
 
-  console.log(JSON.stringify({ ...result, featureSmoke, darkModeSmoke, datePickerSmoke, remoteRequests, loadFailures, consoleErrors }, null, 2));
+  console.log(JSON.stringify({ ...result, featureSmoke, darkModeSmoke, calculatorSmoke, datePickerSmoke, remoteRequests, loadFailures, consoleErrors }, null, 2));
 
   if (failures.length > 0) {
     console.error(failures.join('\n'));

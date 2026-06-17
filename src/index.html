@@ -988,13 +988,13 @@
                 <h2 class="text-xl font-bold text-slate-800 dark:text-white">Terms & Data Notice</h2>
             </div>
             <div class="p-6 overflow-y-auto text-slate-600 dark:text-slate-300 text-sm space-y-5">
-                <div class="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800/50 font-medium">
-                    <strong>Important Notice:</strong> Zahpy Business Pro is a Windows desktop application for preparing and managing business documents. Your workspace records are stored locally on this device, not in a Zahpy cloud account. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Back up your workspace regularly.</strong> Device failure, uninstalling app data, clearing local storage, or restoring an older backup can permanently remove saved records.
+                <div id="termsImportantNotice" class="p-4 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800/50 font-medium">
+                    <strong>Important Notice:</strong> Zahpy Business Pro HTML Browser Edition runs in a web browser. Your workspace records are stored in this browser's local storage for this browser profile and page location, not in a Zahpy cloud account. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Back up your workspace regularly.</strong> Clearing browser data, using a private/incognito window, changing browsers, changing devices, moving to a different file/page location, device failure, or restoring an older backup can make saved records unavailable or permanently remove them.
                 </div>
                 
                 <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">1. Desktop App & Local Workspace</h4>
-                    <p class="leading-relaxed">The standalone and installer editions run as desktop software on Windows. Invoices, estimates, clients, catalog items, payments, business defaults, tax settings, design settings, and app preferences are saved in the local workspace for the Windows user profile. Zahpy Business Pro does not automatically upload, sync, host, or sell those records through a Zahpy cloud service.</p>
+                    <h4 id="termsLocalTitle" class="font-bold text-slate-800 dark:text-white text-base mb-2">1. Browser App & Local Storage</h4>
+                    <p id="termsLocalBody" class="leading-relaxed">The HTML Browser Edition runs from an HTML file or browser page. Invoices, estimates, clients, catalog items, payments, business defaults, tax settings, design settings, and app preferences are saved locally by the browser. This storage is tied to the browser, browser profile, and page address or file location. Zahpy Business Pro does not automatically upload, sync, host, or sell those records through a Zahpy cloud service.</p>
                 </div>
 
                 <div>
@@ -1015,12 +1015,12 @@
 
                 <div>
                     <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">4. Internet Features & External Services</h4>
-                    <p class="leading-relaxed">The core app can run locally and offline after installation or extraction. Update checks, GitHub download links, email compose buttons, PayPal links, Stripe links, and other external links require internet access and may open third-party websites or apps. Those services are governed by their own terms, fees, privacy policies, availability, and account requirements.</p>
+                    <p id="termsExternalBody" class="leading-relaxed">The HTML Browser Edition can run locally after the HTML file and its assets are available, but browser behavior may vary by device and security settings. Email compose buttons, PayPal links, Stripe links, GitHub download links, and other external links require internet access and may open third-party websites or apps. Desktop installer update checks do not apply to the HTML Browser Edition. External services are governed by their own terms, fees, privacy policies, availability, and account requirements.</p>
                 </div>
 
                 <div>
-                    <h4 class="font-bold text-slate-800 dark:text-white text-base mb-2">5. Security, PIN Lock & Updates</h4>
-                    <p class="leading-relaxed">The optional PIN lock protects the local workspace on this device, but forgotten PINs cannot be recovered. Keep separate backups before updating, uninstalling, restoring data, or moving to another computer. Installer updates may replace app files, but your local records still depend on the device, Windows user profile, and backup files you maintain.</p>
+                    <h4 id="termsSecurityTitle" class="font-bold text-slate-800 dark:text-white text-base mb-2">5. Security, PIN Lock & Browser Data</h4>
+                    <p id="termsSecurityBody" class="leading-relaxed">The optional PIN lock protects the local browser workspace, but forgotten PINs cannot be recovered. Keep separate backup files before clearing browser data, changing browsers, moving the HTML file, restoring data, or moving to another device. Browser storage can be affected by browser settings, privacy tools, storage limits, and profile cleanup.</p>
                 </div>
             </div>
             <div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
@@ -2303,9 +2303,31 @@
             });
         }
 
+        function applyTermsForRuntime() {
+            const desktopMode = !!window.zahpyDesktop;
+            const notice = getEl('termsImportantNotice');
+            const localTitle = getEl('termsLocalTitle');
+            const localBody = getEl('termsLocalBody');
+            const externalBody = getEl('termsExternalBody');
+            const securityTitle = getEl('termsSecurityTitle');
+            const securityBody = getEl('termsSecurityBody');
+
+            if (!notice || !localTitle || !localBody || !externalBody || !securityTitle || !securityBody || !desktopMode) {
+                return;
+            }
+
+            notice.innerHTML = '<strong>Important Notice:</strong> Zahpy Business Pro is a Windows desktop application for preparing and managing business documents. Your workspace records are stored locally on this device, not in a Zahpy cloud account. <strong class="underline decoration-rose-300 dark:decoration-rose-700">Back up your workspace regularly.</strong> Device failure, uninstalling app data, clearing local storage, or restoring an older backup can permanently remove saved records.';
+            localTitle.textContent = '1. Desktop App & Local Workspace';
+            localBody.textContent = 'The standalone and installer editions run as desktop software on Windows. Invoices, estimates, clients, catalog items, payments, business defaults, tax settings, design settings, and app preferences are saved in the local workspace for the Windows user profile. Zahpy Business Pro does not automatically upload, sync, host, or sell those records through a Zahpy cloud service.';
+            externalBody.textContent = 'The core app can run locally and offline after installation or extraction. Update checks, GitHub download links, email compose buttons, PayPal links, Stripe links, and other external links require internet access and may open third-party websites or apps. Those services are governed by their own terms, fees, privacy policies, availability, and account requirements.';
+            securityTitle.textContent = '5. Security, PIN Lock & Updates';
+            securityBody.textContent = 'The optional PIN lock protects the local workspace on this device, but forgotten PINs cannot be recovered. Keep separate backups before updating, uninstalling, restoring data, or moving to another computer. Installer updates may replace app files, but your local records still depend on the device, Windows user profile, and backup files you maintain.';
+        }
+
         // --- App Initialization & Global Events ---
         function init() {
             document.getElementById('currentYear').textContent = new Date().getFullYear();
+            applyTermsForRuntime();
 
             const today = new Date().toISOString().split('T')[0];
             const nextW = new Date(Date.now()+14*86400000).toISOString().split('T')[0];
